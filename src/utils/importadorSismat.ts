@@ -6,6 +6,7 @@ import { calculateOrderMath } from './graphicMath';
 import { db, isFirebaseConfigured } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import sismatPreloadData from '../data/sismatHistoricoPreload.json';
+import fichasTecnicasRaw from '../data/fichas_tecnicas.json';
 
 export interface SismatFichaTecnica {
   bsNumber: string;
@@ -619,8 +620,57 @@ export function obterParametrosAprendizadoContinuo(
   machine: string;
   sourceDescription: string;
 } | null {
+  const clean = normalizeMaterialCode(codigo);
   const ultimaOS = buscarUltimaOSPorCodigo(codigo, ordersList);
-  if (!ultimaOS) return null;
+
+  if (!ultimaOS) {
+    // Fallback: Busca na base estática consolidada fichas_tecnicas.json
+    const ficha =
+      (fichasTecnicasRaw as Record<string, any>)[codigo] ||
+      Object.values(fichasTecnicasRaw as Record<string, any>).find(
+        (f: any) => normalizeMaterialCode(f.codigo) === clean
+      );
+
+    if (ficha) {
+      // Localiza papel adequado
+      const pName = (ficha.papel || '').toLowerCase();
+      let matchedPaper = papersList.find((p) => p.name.toLowerCase().includes(pName));
+      if (!matchedPaper) {
+        if (pName.includes('adesiv')) matchedPaper = papersList.find((p) => p.code === 'AD-180');
+        else if (pName.includes('kraft')) matchedPaper = papersList.find((p) => p.code === 'KRF-110');
+        else if (pName.includes('couche') || pName.includes('couché')) matchedPaper = papersList.find((p) => p.code === 'COU-150');
+        else if (pName.includes('cartao') || pName.includes('cartão') || pName.includes('triplex')) matchedPaper = papersList.find((p) => p.code === 'TR-250');
+        else matchedPaper = papersList.find((p) => p.code === 'OFF-75') || papersList[0];
+      }
+
+      // Localiza formato de corte adequado
+      const fName = (ficha.formatoCorte || '').toLowerCase();
+      let matchedFormat = formatsList.find((f) => f.name.toLowerCase() === fName);
+      if (!matchedFormat) {
+        if (fName.includes('40x60') || fName.includes('40 x 60')) matchedFormat = formatsList.find((f) => f.name.includes('40x60') || f.name.includes('120×70')) || formatsList[0];
+        else if (fName.includes('a5') || fName.includes('148x210') || fName.includes('210x148')) matchedFormat = formatsList.find((f) => f.name === 'A5');
+        else if (fName.includes('1/3') || fName.includes('210x105')) matchedFormat = formatsList.find((f) => f.name === '1/3 A4');
+        else if (fName.includes('a6') || fName.includes('105x148')) matchedFormat = formatsList.find((f) => f.name === 'A6');
+        else matchedFormat = formatsList.find((f) => f.name === 'A4') || formatsList[0];
+      }
+
+      return {
+        found: true,
+        order: null,
+        paperId: matchedPaper?.id || papersList[0]?.id || '',
+        cutFormatId: matchedFormat?.id || formatsList[0]?.id || '',
+        blocksQty: 10,
+        sheetsPerBlock: 50,
+        ways: 1,
+        imagesPerPlate: 1,
+        breakMargin: 10,
+        machine: 'Heidelberg Bicolor',
+        sourceDescription: `Ficha Técnica SISMAT - ${ficha.descricao}`,
+      };
+    }
+
+    return null;
+  }
 
   // Localiza o papel correspondente
   let matchedPaperId = ultimaOS.paperId;

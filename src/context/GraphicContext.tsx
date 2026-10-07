@@ -152,6 +152,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const [selectedOrderForPrint, setSelectedOrderForPrint] = useState<ServiceOrder | null>(null);
   const [sismatImportedCount, setSismatImportedCount] = useState<number>(0);
+  const [isFirebaseActive, setIsFirebaseActive] = useState<boolean>(isFirebaseConfigured);
 
   // Inicialização única do Histórico SISMAT (injeta no estado local e salva no Firestore)
   useEffect(() => {
@@ -210,55 +211,94 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     if (!isFirebaseConfigured || !db) return;
 
+    let unsubOrders: (() => void) | undefined;
+    let unsubPapers: (() => void) | undefined;
+    let unsubFormats: (() => void) | undefined;
+    let unsubServices: (() => void) | undefined;
+    let unsubResponsibles: (() => void) | undefined;
+    let unsubMachines: (() => void) | undefined;
+
+    const handleListenerError = (collectionName: string) => (err: any) => {
+      console.warn(
+        `[PJERJ DIGRA] Firestore '${collectionName}' operando em modo local seguro. (Status: ${err?.code || 'permissão restrita'})`
+      );
+      setIsFirebaseActive(false);
+    };
+
     try {
-      const unsubOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
-        if (!snapshot.empty) {
-          const remoteOrders = snapshot.docs.map((d) => d.data() as ServiceOrder);
-          setOrders(remoteOrders);
-        }
-      });
+      unsubOrders = onSnapshot(
+        collection(db, 'orders'),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            const remoteOrders = snapshot.docs.map((d) => d.data() as ServiceOrder);
+            setOrders(remoteOrders);
+          }
+          setIsFirebaseActive(true);
+        },
+        handleListenerError('orders')
+      );
 
-      const unsubPapers = onSnapshot(collection(db, 'papers'), (snapshot) => {
-        if (!snapshot.empty) {
-          setPapers(snapshot.docs.map((d) => d.data() as PaperFactory));
-        }
-      });
+      unsubPapers = onSnapshot(
+        collection(db, 'papers'),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            setPapers(snapshot.docs.map((d) => d.data() as PaperFactory));
+          }
+        },
+        handleListenerError('papers')
+      );
 
-      const unsubFormats = onSnapshot(collection(db, 'formats'), (snapshot) => {
-        if (!snapshot.empty) {
-          setFormats(snapshot.docs.map((d) => d.data() as CutFormat));
-        }
-      });
+      unsubFormats = onSnapshot(
+        collection(db, 'formats'),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            setFormats(snapshot.docs.map((d) => d.data() as CutFormat));
+          }
+        },
+        handleListenerError('formats')
+      );
 
-      const unsubServices = onSnapshot(collection(db, 'services'), (snapshot) => {
-        if (!snapshot.empty) {
-          setServices(snapshot.docs.map((d) => d.data() as ServiceCatalog));
-        }
-      });
+      unsubServices = onSnapshot(
+        collection(db, 'services'),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            setServices(snapshot.docs.map((d) => d.data() as ServiceCatalog));
+          }
+        },
+        handleListenerError('services')
+      );
 
-      const unsubResponsibles = onSnapshot(collection(db, 'responsibles'), (snapshot) => {
-        if (!snapshot.empty) {
-          setResponsibles(snapshot.docs.map((d) => d.data() as Responsible));
-        }
-      });
+      unsubResponsibles = onSnapshot(
+        collection(db, 'responsibles'),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            setResponsibles(snapshot.docs.map((d) => d.data() as Responsible));
+          }
+        },
+        handleListenerError('responsibles')
+      );
 
-      const unsubMachines = onSnapshot(collection(db, 'machines'), (snapshot) => {
-        if (!snapshot.empty) {
-          setMachines(snapshot.docs.map((d) => d.data() as Machine));
-        }
-      });
-
-      return () => {
-        unsubOrders();
-        unsubPapers();
-        unsubFormats();
-        unsubServices();
-        unsubResponsibles();
-        unsubMachines();
-      };
+      unsubMachines = onSnapshot(
+        collection(db, 'machines'),
+        (snapshot) => {
+          if (!snapshot.empty) {
+            setMachines(snapshot.docs.map((d) => d.data() as Machine));
+          }
+        },
+        handleListenerError('machines')
+      );
     } catch (err) {
       console.warn('Erro ao sincronizar Firestore:', err);
     }
+
+    return () => {
+      if (unsubOrders) unsubOrders();
+      if (unsubPapers) unsubPapers();
+      if (unsubFormats) unsubFormats();
+      if (unsubServices) unsubServices();
+      if (unsubResponsibles) unsubResponsibles();
+      if (unsubMachines) unsubMachines();
+    };
   }, []);
 
   // Real-time broadcast sync across tabs
@@ -399,11 +439,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (isFirebaseConfigured && db) {
-        try {
-          setDoc(doc(db, 'orders', id), newOrder);
-        } catch (e) {
-          console.error('Erro ao salvar no Firestore:', e);
-        }
+        setDoc(doc(db, 'orders', id), newOrder).catch((e) =>
+          console.warn('[Firestore] Sincronização remota orders:', e?.message || e)
+        );
       }
 
       return newOrder;
@@ -449,7 +487,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
           };
 
           if (isFirebaseConfigured && db) {
-            setDoc(doc(db, 'orders', id), result);
+            setDoc(doc(db, 'orders', id), result).catch((e) =>
+              console.warn('[Firestore] Sincronização remota orders:', e?.message || e)
+            );
           }
 
           return result;
@@ -471,7 +511,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (isFirebaseConfigured && db) {
-        deleteDoc(doc(db, 'orders', id));
+        deleteDoc(doc(db, 'orders', id)).catch((e) =>
+          console.warn('[Firestore] Exclusão remota orders:', e?.message || e)
+        );
       }
     },
     [broadcastUpdate]
@@ -484,7 +526,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
           if (o.id === id) {
             const updatedOrder = { ...o, status, updatedAt: Date.now() };
             if (isFirebaseConfigured && db) {
-              setDoc(doc(db, 'orders', id), updatedOrder);
+              setDoc(doc(db, 'orders', id), updatedOrder).catch((e) =>
+                console.warn('[Firestore] Sincronização remota orders:', e?.message || e)
+              );
             }
             return updatedOrder;
           }
@@ -503,7 +547,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newPaper: PaperFactory = { ...paper, id };
     setPapers((prev) => [...prev, newPaper]);
     if (isFirebaseConfigured && db) {
-      setDoc(doc(db, 'papers', id), newPaper);
+      setDoc(doc(db, 'papers', id), newPaper).catch((e) =>
+        console.warn('[Firestore] Sincronização remota papers:', e?.message || e)
+      );
     }
   }, []);
 
@@ -513,7 +559,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (p.id === id) {
           const updated = { ...p, ...data };
           if (isFirebaseConfigured && db) {
-            setDoc(doc(db, 'papers', id), updated);
+            setDoc(doc(db, 'papers', id), updated).catch((e) =>
+              console.warn('[Firestore] Sincronização remota papers:', e?.message || e)
+            );
           }
           return updated;
         }
@@ -525,7 +573,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deletePaper = useCallback((id: string) => {
     setPapers((prev) => prev.filter((p) => p.id !== id));
     if (isFirebaseConfigured && db) {
-      deleteDoc(doc(db, 'papers', id));
+      deleteDoc(doc(db, 'papers', id)).catch((e) =>
+        console.warn('[Firestore] Exclusão remota papers:', e?.message || e)
+      );
     }
   }, []);
 
@@ -535,7 +585,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newFormat: CutFormat = { ...format, id };
     setFormats((prev) => [...prev, newFormat]);
     if (isFirebaseConfigured && db) {
-      setDoc(doc(db, 'formats', id), newFormat);
+      setDoc(doc(db, 'formats', id), newFormat).catch((e) =>
+        console.warn('[Firestore] Sincronização remota formats:', e?.message || e)
+      );
     }
   }, []);
 
@@ -545,7 +597,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (f.id === id) {
           const updated = { ...f, ...data };
           if (isFirebaseConfigured && db) {
-            setDoc(doc(db, 'formats', id), updated);
+            setDoc(doc(db, 'formats', id), updated).catch((e) =>
+              console.warn('[Firestore] Sincronização remota formats:', e?.message || e)
+            );
           }
           return updated;
         }
@@ -557,7 +611,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deleteFormat = useCallback((id: string) => {
     setFormats((prev) => prev.filter((f) => f.id !== id));
     if (isFirebaseConfigured && db) {
-      deleteDoc(doc(db, 'formats', id));
+      deleteDoc(doc(db, 'formats', id)).catch((e) =>
+        console.warn('[Firestore] Exclusão remota formats:', e?.message || e)
+      );
     }
   }, []);
 
@@ -567,7 +623,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newService: ServiceCatalog = { ...service, id };
     setServices((prev) => [...prev, newService]);
     if (isFirebaseConfigured && db) {
-      setDoc(doc(db, 'services', id), newService);
+      setDoc(doc(db, 'services', id), newService).catch((e) =>
+        console.warn('[Firestore] Sincronização remota services:', e?.message || e)
+      );
     }
   }, []);
 
@@ -577,7 +635,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (s.id === id) {
           const updated = { ...s, ...data };
           if (isFirebaseConfigured && db) {
-            setDoc(doc(db, 'services', id), updated);
+            setDoc(doc(db, 'services', id), updated).catch((e) =>
+              console.warn('[Firestore] Sincronização remota services:', e?.message || e)
+            );
           }
           return updated;
         }
@@ -589,7 +649,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deleteService = useCallback((id: string) => {
     setServices((prev) => prev.filter((s) => s.id !== id));
     if (isFirebaseConfigured && db) {
-      deleteDoc(doc(db, 'services', id));
+      deleteDoc(doc(db, 'services', id)).catch((e) =>
+        console.warn('[Firestore] Exclusão remota services:', e?.message || e)
+      );
     }
   }, []);
 
@@ -599,7 +661,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newResp: Responsible = { id, name: name.toUpperCase(), role: role || 'Operador Gráfico' };
     setResponsibles((prev) => [...prev, newResp]);
     if (isFirebaseConfigured && db) {
-      setDoc(doc(db, 'responsibles', id), newResp);
+      setDoc(doc(db, 'responsibles', id), newResp).catch((e) =>
+        console.warn('[Firestore] Sincronização remota responsibles:', e?.message || e)
+      );
     }
   }, []);
 
@@ -609,7 +673,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (r.id === id) {
           const updated = { ...r, name: name.toUpperCase(), role: role || r.role || 'Operador Gráfico' };
           if (isFirebaseConfigured && db) {
-            setDoc(doc(db, 'responsibles', id), updated);
+            setDoc(doc(db, 'responsibles', id), updated).catch((e) =>
+              console.warn('[Firestore] Sincronização remota responsibles:', e?.message || e)
+            );
           }
           return updated;
         }
@@ -621,7 +687,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deleteResponsible = useCallback((id: string) => {
     setResponsibles((prev) => prev.filter((r) => r.id !== id));
     if (isFirebaseConfigured && db) {
-      deleteDoc(doc(db, 'responsibles', id));
+      deleteDoc(doc(db, 'responsibles', id)).catch((e) =>
+        console.warn('[Firestore] Exclusão remota responsibles:', e?.message || e)
+      );
     }
   }, []);
 
@@ -631,14 +699,18 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newMach: Machine = { id: name, name, tech: tech || 'Impressão Gráfica' };
     setMachines((prev) => [...prev, newMach]);
     if (isFirebaseConfigured && db) {
-      setDoc(doc(db, 'machines', id), newMach);
+      setDoc(doc(db, 'machines', id), newMach).catch((e) =>
+        console.warn('[Firestore] Sincronização remota machines:', e?.message || e)
+      );
     }
   }, []);
 
   const deleteMachine = useCallback((id: string) => {
     setMachines((prev) => prev.filter((m) => m.id !== id));
     if (isFirebaseConfigured && db) {
-      deleteDoc(doc(db, 'machines', id));
+      deleteDoc(doc(db, 'machines', id)).catch((e) =>
+        console.warn('[Firestore] Exclusão remota machines:', e?.message || e)
+      );
     }
   }, []);
 
@@ -679,7 +751,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         machines,
         selectedOrderForPrint,
         setSelectedOrderForPrint,
-        isFirebaseActive: isFirebaseConfigured,
+        isFirebaseActive,
         sismatImportedCount,
         reimportarSismat,
         addOrder,

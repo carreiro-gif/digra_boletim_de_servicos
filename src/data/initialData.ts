@@ -1,5 +1,6 @@
 import { PaperFactory, CutFormat, ServiceCatalog, Responsible, Machine, ServiceOrder } from '../types';
 import { calculateOrderMath } from '../utils/graphicMath';
+import fichasTecnicasRaw from './fichas_tecnicas.json';
 
 export const INITIAL_RESPONSIBLES: Responsible[] = [
   { id: 'resp-1', name: 'FLÁVIO', role: 'Operador Gráfico' },
@@ -429,21 +430,324 @@ export const initialServices = [
   { codigo: "655-9675", descricao: "LIVRO DE PONTO - 05 PAUTAS", categoria: "LIVROS" },
 ];
 
-export const INITIAL_SERVICES: ServiceCatalog[] = initialServices.map((s) => {
+const servicesMap = new Map<string, ServiceCatalog>();
+
+// 1. Serviços iniciais padrão
+for (const s of initialServices) {
   const codeVal = s.codigo || (s as any).stroke || '';
-  return {
-    id: `srv-${codeVal.replace(/[^0-9a-zA-Z]/g, '')}`,
+  if (!codeVal) continue;
+  const cleanKey = codeVal.replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
+  servicesMap.set(cleanKey, {
+    id: `srv-${cleanKey}`,
     code: codeVal,
     name: s.descricao,
-    category: s.categoria,
+    category: s.categoria as any,
     description: `Serviço oficial PJERJ - Categoria ${s.categoria}`,
     codigo: codeVal,
     descricao: s.descricao,
-    categoria: s.categoria,
-  };
-});
+    categoria: s.categoria as any,
+  });
+}
 
-// Retorna lista inicial de Ordens de Serviço (vazia para início 100% limpo sem nenhuma O.S.)
+// 2. Mescla completa de todas as 1018 fichas técnicas extraídas das planilhas 2025/2026
+for (const [code, ficha] of Object.entries(fichasTecnicasRaw as Record<string, any>)) {
+  const cleanKey = code.replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
+  if (!servicesMap.has(cleanKey)) {
+    servicesMap.set(cleanKey, {
+      id: `srv-${cleanKey}`,
+      code: ficha.codigo || code,
+      name: ficha.descricao || `Material ${code}`,
+      category: ficha.categoria || 'FORMULÁRIOS',
+      description: `Material Oficial PJERJ | Papel: ${ficha.papel || 'Padrão'} | Corte: ${ficha.formatoCorte || 'A4'}`,
+      codigo: ficha.codigo || code,
+      descricao: ficha.descricao,
+      categoria: ficha.categoria || 'FORMULÁRIOS',
+    });
+  }
+}
+
+export const INITIAL_SERVICES: ServiceCatalog[] = Array.from(servicesMap.values());
+
 export function createInitialOrders(): ServiceOrder[] {
-  return [];
+  const paperKraft = INITIAL_PAPERS.find((p) => p.name === 'Kraft 110g') || INITIAL_PAPERS[7];
+  const paperOff75 = INITIAL_PAPERS.find((p) => p.name === 'Offset 75g') || INITIAL_PAPERS[9];
+  const paperOff90 = INITIAL_PAPERS.find((p) => p.name === 'Offset 90g') || INITIAL_PAPERS[10];
+  const paperTriplex = INITIAL_PAPERS.find((p) => p.name === 'Cartão Triplex - 250g') || INITIAL_PAPERS[1];
+  const paperCouche = INITIAL_PAPERS.find((p) => p.name === 'Couché 150g') || INITIAL_PAPERS[5];
+
+  const fmtA4 = INITIAL_FORMATS.find((f) => f.name === 'A4') || INITIAL_FORMATS[0];
+  const fmtSimples = INITIAL_FORMATS.find((f) => f.name === 'Simples') || INITIAL_FORMATS[7];
+  const fmtDuploOficio = INITIAL_FORMATS.find((f) => f.name === 'Duplo Ofício') || INITIAL_FORMATS[5];
+
+  const srvCautela = INITIAL_SERVICES.find((s) => s.code === '655-8753') || INITIAL_SERVICES[13];
+  const srvGuia = INITIAL_SERVICES.find((s) => s.code === '654-3541') || INITIAL_SERVICES[9];
+  const srvCertidao = INITIAL_SERVICES.find((s) => s.code === '654-5480') || INITIAL_SERVICES[10];
+  const srvCapa = INITIAL_SERVICES.find((s) => s.code === '651-0001') || INITIAL_SERVICES[19];
+  const srvSedex = INITIAL_SERVICES.find((s) => s.code === '654-5125') || INITIAL_SERVICES[0];
+
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  // OS 1
+  const math1 = calculateOrderMath({
+    blocksQty: 25,
+    sheetsPerBlock: 50,
+    ways: 2,
+    imagesPerPlate: 1,
+    breakMargin: 20,
+    sheetW: paperKraft.widthMm,
+    sheetH: paperKraft.heightMm,
+    cutW: fmtSimples.widthMm,
+    cutH: fmtSimples.heightMm,
+  });
+
+  // OS 2
+  const math2 = calculateOrderMath({
+    blocksQty: 40,
+    sheetsPerBlock: 100,
+    ways: 1,
+    imagesPerPlate: 1,
+    breakMargin: 35,
+    sheetW: paperOff75.widthMm,
+    sheetH: paperOff75.heightMm,
+    cutW: fmtA4.widthMm,
+    cutH: fmtA4.heightMm,
+  });
+
+  // OS 3
+  const math3 = calculateOrderMath({
+    blocksQty: 10,
+    sheetsPerBlock: 100,
+    ways: 3,
+    imagesPerPlate: 1,
+    breakMargin: 25,
+    sheetW: paperOff90.widthMm,
+    sheetH: paperOff90.heightMm,
+    cutW: fmtA4.widthMm,
+    cutH: fmtA4.heightMm,
+  });
+
+  // OS 4
+  const math4 = calculateOrderMath({
+    blocksQty: 15,
+    sheetsPerBlock: 50,
+    ways: 1,
+    imagesPerPlate: 1,
+    breakMargin: 15,
+    sheetW: paperTriplex.widthMm,
+    sheetH: paperTriplex.heightMm,
+    cutW: fmtDuploOficio.widthMm,
+    cutH: fmtDuploOficio.heightMm,
+  });
+
+  // OS 5
+  const math5 = calculateOrderMath({
+    blocksQty: 20,
+    sheetsPerBlock: 100,
+    ways: 1,
+    imagesPerPlate: 1,
+    breakMargin: 40,
+    sheetW: paperCouche.widthMm,
+    sheetH: paperCouche.heightMm,
+    cutW: fmtA4.widthMm,
+    cutH: fmtA4.heightMm,
+  });
+
+  return [
+    {
+      id: 'os-2026-0001',
+      orderNumber: '#2026-0001',
+      productionMonth: 'Outubro / 2026',
+      dateEmission: '2026-09-24',
+      createdBy: 'FLÁVIO',
+      machine: 'Heidelberg Bicolor',
+      priority: 'Alta Prioridade',
+      status: 'Em Impressão',
+      observation: 'Corte rigoroso. Utilizar tinta preta indelével para numeração das cautelas.',
+      serviceId: srvCautela.id,
+      serviceCode: srvCautela.code,
+      serviceName: srvCautela.name,
+      serviceCategory: srvCautela.category,
+      paperId: paperKraft.id,
+      paperCode: paperKraft.code,
+      paperName: paperKraft.name,
+      paperWidthMm: paperKraft.widthMm,
+      paperHeightMm: paperKraft.heightMm,
+      packageSheets: paperKraft.packageSheets,
+      cutFormatId: fmtSimples.id,
+      cutFormatName: fmtSimples.name,
+      cutWidthMm: fmtSimples.widthMm,
+      cutHeightMm: fmtSimples.heightMm,
+      blocksQty: 25,
+      sheetsPerBlock: 50,
+      ways: 2,
+      imagesPerPlate: 1,
+      breakMargin: 20,
+      totalFinalSheets: math1.totalFinalSheets,
+      yieldPerSheet: math1.yieldPerSheet,
+      cutsDescription: math1.cutsDescription,
+      fullSheetsNeeded: math1.fullSheetsNeeded,
+      totalFactorySheetsUsed: math1.totalFactorySheetsUsed,
+      packagesCount: Math.round((math1.totalFactorySheetsUsed / paperKraft.packageSheets) * 10) / 10,
+      efficiencyPercent: math1.efficiencyPercent,
+      createdAt: now - 6 * dayMs,
+      updatedAt: now - 1 * dayMs,
+    },
+    {
+      id: 'os-2026-0002',
+      orderNumber: '#2026-0002',
+      productionMonth: 'Outubro / 2026',
+      dateEmission: '2026-09-26',
+      createdBy: 'ENÉIAS',
+      machine: 'Sakurai',
+      priority: 'Normal',
+      status: 'Em Corte',
+      observation: 'Grampo lateral e serrilha picotada na margem esquerda.',
+      serviceId: srvGuia.id,
+      serviceCode: srvGuia.code,
+      serviceName: srvGuia.name,
+      serviceCategory: srvGuia.category,
+      paperId: paperOff75.id,
+      paperCode: paperOff75.code,
+      paperName: paperOff75.name,
+      paperWidthMm: paperOff75.widthMm,
+      paperHeightMm: paperOff75.heightMm,
+      packageSheets: paperOff75.packageSheets,
+      cutFormatId: fmtA4.id,
+      cutFormatName: fmtA4.name,
+      cutWidthMm: fmtA4.widthMm,
+      cutHeightMm: fmtA4.heightMm,
+      blocksQty: 40,
+      sheetsPerBlock: 100,
+      ways: 1,
+      imagesPerPlate: 1,
+      breakMargin: 35,
+      totalFinalSheets: math2.totalFinalSheets,
+      yieldPerSheet: math2.yieldPerSheet,
+      cutsDescription: math2.cutsDescription,
+      fullSheetsNeeded: math2.fullSheetsNeeded,
+      totalFactorySheetsUsed: math2.totalFactorySheetsUsed,
+      packagesCount: Math.round((math2.totalFactorySheetsUsed / paperOff75.packageSheets) * 10) / 10,
+      efficiencyPercent: math2.efficiencyPercent,
+      createdAt: now - 4 * dayMs,
+      updatedAt: now - 3 * 3600 * 1000,
+    },
+    {
+      id: 'os-2026-0003',
+      orderNumber: '#2026-0003',
+      productionMonth: 'Outubro / 2026',
+      dateEmission: '2026-09-28',
+      createdBy: 'RICARDO',
+      machine: 'Heidelberg Bicolor',
+      priority: 'Urgente',
+      status: 'Em Acabamento',
+      observation: 'Certidão oficial com brasão d’água do PJERJ.',
+      serviceId: srvCertidao.id,
+      serviceCode: srvCertidao.code,
+      serviceName: srvCertidao.name,
+      serviceCategory: srvCertidao.category,
+      paperId: paperOff90.id,
+      paperCode: paperOff90.code,
+      paperName: paperOff90.name,
+      paperWidthMm: paperOff90.widthMm,
+      paperHeightMm: paperOff90.heightMm,
+      packageSheets: paperOff90.packageSheets,
+      cutFormatId: fmtA4.id,
+      cutFormatName: fmtA4.name,
+      cutWidthMm: fmtA4.widthMm,
+      cutHeightMm: fmtA4.heightMm,
+      blocksQty: 10,
+      sheetsPerBlock: 100,
+      ways: 3,
+      imagesPerPlate: 1,
+      breakMargin: 25,
+      totalFinalSheets: math3.totalFinalSheets,
+      yieldPerSheet: math3.yieldPerSheet,
+      cutsDescription: math3.cutsDescription,
+      fullSheetsNeeded: math3.fullSheetsNeeded,
+      totalFactorySheetsUsed: math3.totalFactorySheetsUsed,
+      packagesCount: Math.round((math3.totalFactorySheetsUsed / paperOff90.packageSheets) * 10) / 10,
+      efficiencyPercent: math3.efficiencyPercent,
+      createdAt: now - 2 * dayMs,
+      updatedAt: now - 2 * 3600 * 1000,
+    },
+    {
+      id: 'os-2026-0004',
+      orderNumber: '#2026-0004',
+      productionMonth: 'Outubro / 2026',
+      dateEmission: '2026-09-30',
+      createdBy: 'FLÁVIO',
+      machine: 'Sakurai',
+      priority: 'Normal',
+      status: 'Aguardando Início',
+      observation: 'Capas de processo com vinco de dobra reforçado.',
+      serviceId: srvCapa.id,
+      serviceCode: srvCapa.code,
+      serviceName: srvCapa.name,
+      serviceCategory: srvCapa.category,
+      paperId: paperTriplex.id,
+      paperCode: paperTriplex.code,
+      paperName: paperTriplex.name,
+      paperWidthMm: paperTriplex.widthMm,
+      paperHeightMm: paperTriplex.heightMm,
+      packageSheets: paperTriplex.packageSheets,
+      cutFormatId: fmtDuploOficio.id,
+      cutFormatName: fmtDuploOficio.name,
+      cutWidthMm: fmtDuploOficio.widthMm,
+      cutHeightMm: fmtDuploOficio.heightMm,
+      blocksQty: 15,
+      sheetsPerBlock: 50,
+      ways: 1,
+      imagesPerPlate: 1,
+      breakMargin: 15,
+      totalFinalSheets: math4.totalFinalSheets,
+      yieldPerSheet: math4.yieldPerSheet,
+      cutsDescription: math4.cutsDescription,
+      fullSheetsNeeded: math4.fullSheetsNeeded,
+      totalFactorySheetsUsed: math4.totalFactorySheetsUsed,
+      packagesCount: Math.round((math4.totalFactorySheetsUsed / paperTriplex.packageSheets) * 10) / 10,
+      efficiencyPercent: math4.efficiencyPercent,
+      createdAt: now - 1 * dayMs,
+      updatedAt: now - 1 * dayMs,
+    },
+    {
+      id: 'os-2026-0005',
+      orderNumber: '#2026-0005',
+      productionMonth: 'Outubro / 2026',
+      dateEmission: '2026-09-22',
+      createdBy: 'ENÉIAS',
+      machine: 'Heidelberg Bicolor',
+      priority: 'Normal',
+      status: 'Pronto',
+      observation: 'Dobra e acabamento canoa com 2 grampos.',
+      serviceId: srvSedex.id,
+      serviceCode: srvSedex.code,
+      serviceName: srvSedex.name,
+      serviceCategory: srvSedex.category,
+      paperId: paperCouche.id,
+      paperCode: paperCouche.code,
+      paperName: paperCouche.name,
+      paperWidthMm: paperCouche.widthMm,
+      paperHeightMm: paperCouche.heightMm,
+      packageSheets: paperCouche.packageSheets,
+      cutFormatId: fmtA4.id,
+      cutFormatName: fmtA4.name,
+      cutWidthMm: fmtA4.widthMm,
+      cutHeightMm: fmtA4.heightMm,
+      blocksQty: 20,
+      sheetsPerBlock: 100,
+      ways: 1,
+      imagesPerPlate: 1,
+      breakMargin: 40,
+      totalFinalSheets: math5.totalFinalSheets,
+      yieldPerSheet: math5.yieldPerSheet,
+      cutsDescription: math5.cutsDescription,
+      fullSheetsNeeded: math5.fullSheetsNeeded,
+      totalFactorySheetsUsed: math5.totalFactorySheetsUsed,
+      packagesCount: Math.round((math5.totalFactorySheetsUsed / paperCouche.packageSheets) * 10) / 10,
+      efficiencyPercent: math5.efficiencyPercent,
+      createdAt: now - 8 * dayMs,
+      updatedAt: now - 2 * dayMs,
+    },
+  ];
 }

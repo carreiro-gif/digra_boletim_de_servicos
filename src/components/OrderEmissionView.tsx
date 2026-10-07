@@ -5,6 +5,7 @@ import {
   calculateOrderMath,
   getCurrentProductionMonth,
   getProductionMonthOptions,
+  MONTHS_PT,
 } from '../utils/graphicMath';
 import { CuttingSchematic } from './CuttingSchematic';
 import { PjerjLogo } from './PjerjLogo';
@@ -20,6 +21,7 @@ import {
   CheckCircle2,
   Calculator,
   Search,
+  ChevronLeft,
   ChevronRight,
   RotateCcw,
   Edit3,
@@ -27,6 +29,7 @@ import {
   AlertTriangle,
   X,
   Calendar,
+  CalendarDays,
   Sparkles,
   History,
 } from 'lucide-react';
@@ -67,6 +70,29 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
   const [createdBy, setCreatedBy] = useState<string>('');
   const [machine, setMachine] = useState<string>('');
   const [observation, setObservation] = useState<string>('');
+
+  // Seletor Visual de Mês e Ano de Produção (com calendário, todos os 12 meses e opção de anos)
+  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
+  const [pickerYear, setPickerYear] = useState<number>(() => {
+    const match = (productionMonth || '').match(/(\d{4})/);
+    return match ? parseInt(match[1], 10) : new Date().getFullYear();
+  });
+
+  const openMonthPicker = () => {
+    const match = (productionMonth || '').match(/(\d{4})/);
+    if (match) {
+      setPickerYear(parseInt(match[1], 10));
+    } else {
+      setPickerYear(new Date().getFullYear());
+    }
+    setIsMonthPickerOpen(true);
+  };
+
+  const handleSelectMonth = (monthName: string, year: number) => {
+    setProductionMonth(`${monthName} / ${year}`);
+    if (validationError) setValidationError(null);
+    setIsMonthPickerOpen(false);
+  };
 
   // Busca Inteligente de Código (Ignorando traços / hífens)
   const [serviceCodeInput, setServiceCodeInput] = useState<string>('');
@@ -142,7 +168,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     }
 
     const aprendizado = obterParametrosAprendizadoContinuo(clean, orders, papers, formats);
-    if (aprendizado && aprendizado.found && aprendizado.order) {
+    if (aprendizado && aprendizado.found) {
       lastAppliedCodeRef.current = clean;
       if (aprendizado.paperId) setSelectedPaperId(aprendizado.paperId);
       if (aprendizado.cutFormatId) setSelectedFormatId(aprendizado.cutFormatId);
@@ -153,11 +179,14 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
       if (aprendizado.breakMargin !== undefined) setBreakMargin(aprendizado.breakMargin); // Sobra
       if (aprendizado.machine && !machine) setMachine(aprendizado.machine);
 
+      const paperObj = papers.find((p) => p.id === aprendizado.paperId);
+      const formatObj = formats.find((f) => f.id === aprendizado.cutFormatId);
+
       setLearningInfo({
-        orderNumber: aprendizado.order.orderNumber,
-        productionMonth: aprendizado.order.productionMonth || '',
-        paperName: aprendizado.order.paperName,
-        cutFormatName: aprendizado.order.cutFormatName,
+        orderNumber: aprendizado.order?.orderNumber || 'Ficha SISMAT Oficial',
+        productionMonth: aprendizado.order?.productionMonth || 'Histórico Consolidado',
+        paperName: aprendizado.order?.paperName || paperObj?.name || '',
+        cutFormatName: aprendizado.order?.cutFormatName || formatObj?.name || '',
         blocksQty: aprendizado.blocksQty,
         breakMargin: aprendizado.breakMargin,
         machine: aprendizado.machine,
@@ -639,24 +668,35 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                       ↺ Mês Atual
                     </button>
                   </div>
-                  <div className="relative">
-                    <input
-                      id="top-production-month-input"
-                      type="text"
-                      list="production-months-list"
-                      value={productionMonth}
-                      onChange={(e) => {
-                        setProductionMonth(e.target.value);
-                        if (validationError) setValidationError(null);
-                      }}
-                      placeholder="Ex: Setembro / 2026"
-                      className={`w-full bg-white text-slate-900 border-2 rounded-xl px-3 py-2 text-sm font-black font-mono shadow-inner focus:ring-4 focus:ring-blue-400 focus:outline-none transition-all ${
-                        !productionMonth && validationError ? 'border-red-500 ring-2 ring-red-400' : 'border-blue-400'
-                      }`}
-                    />
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        id="top-production-month-input"
+                        type="text"
+                        list="production-months-list"
+                        value={productionMonth}
+                        onChange={(e) => {
+                          setProductionMonth(e.target.value);
+                          if (validationError) setValidationError(null);
+                        }}
+                        placeholder="Ex: Setembro / 2026"
+                        className={`w-full bg-white text-slate-900 border-2 rounded-xl pl-3 pr-2 py-2 text-sm font-black font-mono shadow-inner focus:ring-4 focus:ring-blue-400 focus:outline-none transition-all ${
+                          !productionMonth && validationError ? 'border-red-500 ring-2 ring-red-400' : 'border-blue-400'
+                        }`}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={openMonthPicker}
+                      className="px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-md border border-blue-400/50 cursor-pointer shrink-0 transition-transform active:scale-95"
+                      title="Abrir calendário para escolher qualquer mês e ano"
+                    >
+                      <CalendarDays className="w-4 h-4 text-amber-300" />
+                      <span>Calendário</span>
+                    </button>
                   </div>
                   <span className="text-[10px] text-blue-200 block mt-1 font-medium">
-                    100% editável para qualquer mês/ano (retroativo ou futuro)
+                    Clique em <strong>Calendário</strong> para escolher qualquer mês e alterar o ano
                   </span>
                 </div>
               </div>
@@ -724,10 +764,21 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
 
                 {/* MÊS DE PRODUÇÃO: Autopreenchido de forma inteligente com o mês atual e totalmente editável */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1" title="Período de faturamento e produção oficial">
-                    MÊS DE PRODUÇÃO: <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-slate-700" title="Período de faturamento e produção oficial">
+                      MÊS DE PRODUÇÃO: <span className="text-red-500">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={openMonthPicker}
+                      className="text-[10px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 cursor-pointer"
+                      title="Abrir calendário para escolher qualquer mês e ano"
+                    >
+                      <CalendarDays className="w-3 h-3 text-blue-500" />
+                      <span>Calendário</span>
+                    </button>
+                  </div>
+                  <div className="relative flex items-center gap-1.5">
                     <input
                       type="text"
                       list="production-months-list"
@@ -741,6 +792,14 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                         !productionMonth && validationError ? 'border-red-500 ring-1 ring-red-500' : 'border-slate-300'
                       }`}
                     />
+                    <button
+                      type="button"
+                      onClick={openMonthPicker}
+                      className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 transition-colors cursor-pointer shrink-0"
+                      title="Abrir calendário para escolher mês e ano"
+                    >
+                      <CalendarDays className="w-4 h-4 text-blue-600" />
+                    </button>
                     <datalist id="production-months-list">
                       {productionMonthOptions.map((opt) => (
                         <option key={opt} value={opt} />
@@ -749,7 +808,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                   </div>
                   <span className="text-[10px] text-slate-500 block mt-0.5 font-medium flex items-center gap-1">
                     <Calendar className="w-3 h-3 text-slate-400" />
-                    <span>Mês corrente do sistema &bull; Editável</span>
+                    <span>Mês corrente ou clique no calendário para outro mês/ano</span>
                   </span>
                 </div>
               </div>
@@ -1354,6 +1413,168 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
           </table>
         </div>
       </div>
+
+      {/* ================= MODAL SELETOR DE MÊS E ANO DE PRODUÇÃO ================= */}
+      {isMonthPickerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in zoom-in-95">
+            {/* Header do Seletor */}
+            <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0">
+                  <CalendarDays className="w-5 h-5 text-amber-300" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black tracking-wide uppercase">
+                    Mês e Ano de Produção
+                  </h3>
+                  <p className="text-[11px] text-blue-200 font-medium">
+                    Escolha o mês e altere o ano conforme a demanda
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMonthPickerOpen(false)}
+                className="p-1.5 text-blue-200 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                title="Fechar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {/* Barra do Ano com Setas e Input Direto */}
+              <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-xl flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setPickerYear((prev) => prev - 1)}
+                  className="p-2 rounded-lg hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer flex items-center gap-1 text-xs font-bold"
+                  title="Ano Anterior"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  <span className="hidden sm:inline">Anterior</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs uppercase font-bold text-slate-500">Ano:</span>
+                  <input
+                    type="number"
+                    value={pickerYear}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val)) setPickerYear(val);
+                    }}
+                    className="w-24 text-center font-black font-mono text-xl text-blue-900 bg-white border-2 border-blue-300 rounded-xl py-1 px-2 shadow-inner focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setPickerYear((prev) => prev + 1)}
+                  className="p-2 rounded-lg hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer flex items-center gap-1 text-xs font-bold"
+                  title="Próximo Ano"
+                >
+                  <span className="hidden sm:inline">Próximo</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Botões de Atalho de Anos e Mês Vigente */}
+              <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                <div className="flex items-center gap-1">
+                  {[2024, 2025, 2026, 2027].map((y) => (
+                    <button
+                      key={y}
+                      type="button"
+                      onClick={() => setPickerYear(y)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        pickerYear === y
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = getCurrentProductionMonth();
+                    setProductionMonth(current);
+                    setIsMonthPickerOpen(false);
+                  }}
+                  className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 transition-colors cursor-pointer"
+                  title="Usar mês e ano corrente de hoje"
+                >
+                  ↺ Mês Vigente ({getCurrentProductionMonth()})
+                </button>
+              </div>
+
+              {/* Grade com os 12 Meses */}
+              <div>
+                <span className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
+                  Selecione o Mês Desejado:
+                </span>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {MONTHS_PT.map((m, idx) => {
+                    const isSelected = productionMonth === `${m} / ${pickerYear}`;
+                    const isCurrentMonthNow =
+                      m === MONTHS_PT[new Date().getMonth()] &&
+                      pickerYear === new Date().getFullYear();
+
+                    return (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => handleSelectMonth(m, pickerYear)}
+                        className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer border flex flex-col items-center justify-center gap-0.5 ${
+                          isSelected
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300 scale-102'
+                            : isCurrentMonthNow
+                            ? 'bg-emerald-50 text-emerald-950 border-emerald-300 hover:bg-emerald-100'
+                            : 'bg-slate-50 hover:bg-blue-50 text-slate-800 border-slate-200 hover:border-blue-300'
+                        }`}
+                      >
+                        <span className={`text-[10px] font-mono ${isSelected ? 'text-blue-100' : 'text-slate-400'}`}>
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
+                        <span className="leading-tight">{m}</span>
+                        {isCurrentMonthNow && (
+                          <span className={`text-[9px] font-bold ${isSelected ? 'text-amber-300' : 'text-emerald-700'}`}>
+                            (Hoje)
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Rodapé Informativo */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">
+                    Mês Atual da O.S.:
+                  </span>
+                  <span className="text-sm font-black text-slate-900 font-mono">
+                    {productionMonth || 'Não definido'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMonthPickerOpen(false)}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
