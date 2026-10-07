@@ -7164,5 +7164,3061 @@
     "papel": "Papel Off-set 75 Gr/m²",
     "formatoCorte": "210x297mm",
     "categoria": "FORMULÁRIOS GERAIS"
+  },
+  "654-5126": {
+    "codigo": "654-5126",
+    "descricao": "Etiquetas p/ correios - REM. LOCAL",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-9990": {
+    "codigo": "655-9990",
+    "descricao": "Etiqueta com Timbre do PJRJ",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-2413": {
+    "codigo": "656-2413",
+    "descricao": "Etiqueta correios - Com Devolução",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-2414": {
+    "codigo": "656-2414",
+    "descricao": "Etiqueta correios - Sem Devolução",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0014": {
+    "codigo": "651-0014",
+    "descricao": "Relação de Material Permanente",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0015": {
+    "codigo": "651-0015",
+    "descricao": "Ordem Exec. Serv.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0039": {
+    "codigo": "651-0039",
+    "descricao": "Guia de Remessa de Processos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0070": {
+    "codigo": "651-0070",
+    "descricao": "Bolso do Livro",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0081": {
+    "codigo": "651-0081",
+    "descricao": "Memorando Consulta",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0086": {
+    "codigo": "651-0086",
+    "descricao": "Pedido de Material",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0088": {
+    "codigo": "651-0088",
+    "descricao": "Formulário Controle",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0218": {
+    "codigo": "651-0218",
+    "descricao": "Requisição de Cópias",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0224": {
+    "codigo": "651-0224",
+    "descricao": "Certidão de Tempo de Serviço",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0226": {
+    "codigo": "651-0226",
+    "descricao": "Guia Remessa Exp.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0227": {
+    "codigo": "651-0227",
+    "descricao": "Guia de Remessa Exp.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0228": {
+    "codigo": "651-0228",
+    "descricao": "Controle Orçamentário Global",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0230": {
+    "codigo": "651-0230",
+    "descricao": "Controle de Correspondência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0247": {
+    "codigo": "651-0247",
+    "descricao": "Memorando de saída",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0255": {
+    "codigo": "651-0255",
+    "descricao": "Requisição de Peças",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0258": {
+    "codigo": "651-0258",
+    "descricao": "Revisão (S.R.M.B.Móveis)",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0268": {
+    "codigo": "651-0268",
+    "descricao": "Receituário Médico",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "275": {
+    "codigo": "275",
+    "descricao": "Requerimento de Licença Especial.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0277": {
+    "codigo": "651-0277",
+    "descricao": "Solicitaçao de Material",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0293": {
+    "codigo": "651-0293",
+    "descricao": "Guia de remessa de processos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "294": {
+    "codigo": "294",
+    "descricao": "Requisição de Serviço",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "298": {
+    "codigo": "298",
+    "descricao": "Sol. Serv. Mecan.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "305": {
+    "codigo": "305",
+    "descricao": "Correspondência Postada",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0327": {
+    "codigo": "651-0327",
+    "descricao": "Comp. Entrega de Selo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "332": {
+    "codigo": "332",
+    "descricao": "Papel Informação c/ Pauta",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0338": {
+    "codigo": "651-0338",
+    "descricao": "Lista de entrega simples",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "343": {
+    "codigo": "343",
+    "descricao": "Guia de Postagem",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "363": {
+    "codigo": "363",
+    "descricao": "Certidão Execuções",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0364": {
+    "codigo": "651-0364",
+    "descricao": "Bloco de Arquivo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "365": {
+    "codigo": "365",
+    "descricao": "Registro Dependência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "367": {
+    "codigo": "367",
+    "descricao": "Folha de Arquivo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "377": {
+    "codigo": "377",
+    "descricao": "Carta de Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "378": {
+    "codigo": "378",
+    "descricao": "Boletim de Informação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0390": {
+    "codigo": "651-0390",
+    "descricao": "Ressalva Vep",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0391": {
+    "codigo": "651-0391",
+    "descricao": "Soltura de Apenados",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "393": {
+    "codigo": "393",
+    "descricao": "Supensão de pena",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "397": {
+    "codigo": "397",
+    "descricao": "Guia de Remessa VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0398": {
+    "codigo": "651-0398",
+    "descricao": "Requisição de xerox",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "401": {
+    "codigo": "401",
+    "descricao": "Guia de Remessa VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "418": {
+    "codigo": "418",
+    "descricao": "Memorando Notificação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0440": {
+    "codigo": "651-0440",
+    "descricao": "Publicação de Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0441": {
+    "codigo": "651-0441",
+    "descricao": "Publicação de Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0445": {
+    "codigo": "651-0445",
+    "descricao": "Caderneta de Sursís",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "505": {
+    "codigo": "505",
+    "descricao": "Carta Precatória - Citação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "517": {
+    "codigo": "517",
+    "descricao": "Alvará Soltura",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "518": {
+    "codigo": "518",
+    "descricao": "Carta Precatória",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "523": {
+    "codigo": "523",
+    "descricao": "Fix. Alimentos c/ Gratuidade BL",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "524": {
+    "codigo": "524",
+    "descricao": "Of. Comunicação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0530": {
+    "codigo": "651-0530",
+    "descricao": "Termo Inventariante",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "545": {
+    "codigo": "545",
+    "descricao": "Carta de Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0546": {
+    "codigo": "651-0546",
+    "descricao": "Audiência conc. E julgamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0559": {
+    "codigo": "651-0559",
+    "descricao": "Controle Andamento de Processo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "674": {
+    "codigo": "674",
+    "descricao": "Papel Estatísticas Julgamentos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0675": {
+    "codigo": "651-0675",
+    "descricao": "Formulário Recebimento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "676": {
+    "codigo": "676",
+    "descricao": "Oficio Informação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "889": {
+    "codigo": "889",
+    "descricao": "Movimento Diário",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0890": {
+    "codigo": "651-0890",
+    "descricao": "Testam. Tutoria Judicial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "942": {
+    "codigo": "942",
+    "descricao": "Rel. de Ver. Pericial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "943": {
+    "codigo": "943",
+    "descricao": "Boletim Atest. Médico",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "944": {
+    "codigo": "944",
+    "descricao": "Atestado Saúde Ocupacional",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0972": {
+    "codigo": "651-0972",
+    "descricao": "Recibo de Aluguel",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "982": {
+    "codigo": "982",
+    "descricao": "Recibo de Aluguel",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0983": {
+    "codigo": "651-0983",
+    "descricao": "Termo Tutéla",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0987": {
+    "codigo": "651-0987",
+    "descricao": "Termo Afirmação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0998": {
+    "codigo": "651-0998",
+    "descricao": "Aut. Para Viagem",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1001": {
+    "codigo": "651-1001",
+    "descricao": "Mem. Inf. Juventude",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1003": {
+    "codigo": "651-1003",
+    "descricao": "Alvará Autorização Juizado de Menores",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1009": {
+    "codigo": "651-1009",
+    "descricao": "Req. De Autor. Viagem",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1019": {
+    "codigo": "651-1019",
+    "descricao": "Termo de Guarda",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1058": {
+    "codigo": "651-1058",
+    "descricao": "Auto de Infração",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1122": {
+    "codigo": "651-1122",
+    "descricao": "Petição Designação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1123": {
+    "codigo": "651-1123",
+    "descricao": "Petição Expedição",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1128": {
+    "codigo": "651-1128",
+    "descricao": "Certidão Habilitação de Casamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1129": {
+    "codigo": "651-1129",
+    "descricao": "Certidão de Obito 1ª Via",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1132": {
+    "codigo": "651-1132",
+    "descricao": "Certidão de casamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1133": {
+    "codigo": "651-1133",
+    "descricao": "Certidão de Nascimento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1134": {
+    "codigo": "651-1134",
+    "descricao": "Certidão Nascimento - 1ª Via",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1206": {
+    "codigo": "651-1206",
+    "descricao": "Formulário conta de custas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1216": {
+    "codigo": "651-1216",
+    "descricao": "Papel Certidão",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1236": {
+    "codigo": "651-1236",
+    "descricao": "Pauta audiência mensal",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1239": {
+    "codigo": "651-1239",
+    "descricao": "Formulário Malote",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1310": {
+    "codigo": "651-1310",
+    "descricao": "Formulário recibo custas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1319": {
+    "codigo": "651-1319",
+    "descricao": "Boletim Frequencia",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1320": {
+    "codigo": "651-1320",
+    "descricao": "Guia de Remessa -Correio",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1408": {
+    "codigo": "651-1408",
+    "descricao": "Bloco Crédito",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1409": {
+    "codigo": "651-1409",
+    "descricao": "Formulário Controle Contador Judicial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1419": {
+    "codigo": "651-1419",
+    "descricao": "Formulário Custas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1482": {
+    "codigo": "651-1482",
+    "descricao": "Petição Inicial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1517": {
+    "codigo": "651-1517",
+    "descricao": "Auto de Penhora",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1519": {
+    "codigo": "651-1519",
+    "descricao": "Auto Arresto Depósito",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1522": {
+    "codigo": "651-1522",
+    "descricao": "Carta Precatória",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1524": {
+    "codigo": "651-1524",
+    "descricao": "Carta de Sentença abertura",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1651": {
+    "codigo": "651-1651",
+    "descricao": "Folha Certidão para Livro",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1654": {
+    "codigo": "651-1654",
+    "descricao": "Formulário Procuração",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1659": {
+    "codigo": "651-1659",
+    "descricao": "Pedido de Certidão ao Cartório Distribuidor",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1660": {
+    "codigo": "651-1660",
+    "descricao": "Formulário Dist. Cont. e Partidor",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1825": {
+    "codigo": "651-1825",
+    "descricao": "Papel Frente Formal carta",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1834": {
+    "codigo": "651-1834",
+    "descricao": "Termo de Inventariante",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1838": {
+    "codigo": "651-1838",
+    "descricao": "Intimação Pelo Correio",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1841": {
+    "codigo": "651-1841",
+    "descricao": "Convocação de audiência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1845": {
+    "codigo": "651-1845",
+    "descricao": "Aviso Exp. Mandado",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1846": {
+    "codigo": "651-1846",
+    "descricao": "Rel. Diligências",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1849": {
+    "codigo": "651-1849",
+    "descricao": "Anotação de Serviço de Oficina",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1855": {
+    "codigo": "651-1855",
+    "descricao": "Oficio Cálculo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1883": {
+    "codigo": "651-1883",
+    "descricao": "Estatística Mensal - Serviço Social",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1921": {
+    "codigo": "651-1921",
+    "descricao": "Guia de Remessa Interna",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1924": {
+    "codigo": "651-1924",
+    "descricao": "Aviso de Recebimento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1927": {
+    "codigo": "651-1927",
+    "descricao": "Form. Controle Desarquivamento de Autos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1943": {
+    "codigo": "651-1943",
+    "descricao": "Solicitação de Transporte",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-7750": {
+    "codigo": "651-7750",
+    "descricao": "Bloco de Rascunho",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-5079": {
+    "codigo": "652-5079",
+    "descricao": "Folder Dia da Testemunha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-0943": {
+    "codigo": "652-0943",
+    "descricao": "Boletim de atendimento médico externo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-0944": {
+    "codigo": "652-0944",
+    "descricao": "Atestado de Saúde ocupacional",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-0963": {
+    "codigo": "652-0963",
+    "descricao": "Formulário Padrão de N° de Maços",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-1172": {
+    "codigo": "652-1172",
+    "descricao": "Papel Conselho de Vitaliciamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-2243": {
+    "codigo": "652-2243",
+    "descricao": "Mandado de Transf. Banco do Brasil",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-2528": {
+    "codigo": "652-2528",
+    "descricao": "recibo Relação de Peças",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-2770": {
+    "codigo": "652-2770",
+    "descricao": "Requerimento Benefícios",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3576": {
+    "codigo": "652-3576",
+    "descricao": "Guia de Remessa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3577": {
+    "codigo": "652-3577",
+    "descricao": "Guia de Remessa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3606": {
+    "codigo": "652-3606",
+    "descricao": "Dep. Saúde Atestado",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3607": {
+    "codigo": "652-3607",
+    "descricao": "Resumo de Atendimento Médico",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3608": {
+    "codigo": "652-3608",
+    "descricao": "Rec. De Cont. Especial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3609": {
+    "codigo": "652-3609",
+    "descricao": "Quest. Admissional",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-3610": {
+    "codigo": "652-3610",
+    "descricao": "Dep. De Saúde atestado",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-5174": {
+    "codigo": "652-5174",
+    "descricao": "Termo de Transf. De Equipamentos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7131": {
+    "codigo": "652-7131",
+    "descricao": "Boletim Diário de Transporte",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7147": {
+    "codigo": "652-7147",
+    "descricao": "Formulário P/ Controle de Material",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7329": {
+    "codigo": "652-7329",
+    "descricao": "Controle das Viaturas de Expediente",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7330": {
+    "codigo": "652-7330",
+    "descricao": "Controle de Abastecimento por Cartão",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7331": {
+    "codigo": "652-7331",
+    "descricao": "Controle de Empréstimos de Combustivel",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8566": {
+    "codigo": "652-8566",
+    "descricao": "Formulário Auditoria Geral",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8593": {
+    "codigo": "652-8593",
+    "descricao": "Formulário P/ Relatório de Inspeção",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8594": {
+    "codigo": "652-8594",
+    "descricao": "Formulário P/ Sol. Serviços de Oficina",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8595": {
+    "codigo": "652-8595",
+    "descricao": "Formulário Cont. de Ent. Viaturas na Oficina",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8919": {
+    "codigo": "652-8919",
+    "descricao": "Estatistica Diária Malote",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8920": {
+    "codigo": "652-8920",
+    "descricao": "Devolução Malote Aviso",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9097": {
+    "codigo": "652-9097",
+    "descricao": "Formulário de Processos Cadastrados",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9098": {
+    "codigo": "652-9098",
+    "descricao": "Form. Termo de Eliminação de Documentos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9136": {
+    "codigo": "652-9136",
+    "descricao": "Formulário de Proc. Cadast.- Continuação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9138": {
+    "codigo": "652-9138",
+    "descricao": "Form. Termo de Elimin.de Docum. - Contin.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9140": {
+    "codigo": "652-9140",
+    "descricao": "Certidão - 9ª V. Cível",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9141": {
+    "codigo": "652-9141",
+    "descricao": "Ficha de Cont. de Frequência e Avaliação do Mês",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9457": {
+    "codigo": "652-9457",
+    "descricao": "Etiqueta Identificação de Comarca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9458": {
+    "codigo": "652-9458",
+    "descricao": "Etiqueta Identificação de Órgão Julgador",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9725": {
+    "codigo": "652-9725",
+    "descricao": "Formulário Termo de Eliminação de ...",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9726": {
+    "codigo": "652-9726",
+    "descricao": "Formulário Termo de Eliminação de ...",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9727": {
+    "codigo": "652-9727",
+    "descricao": "Formulário Termo de Eliminação de ...",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9734": {
+    "codigo": "652-9734",
+    "descricao": "Etiqueta \" Prioridade Pessoa Idosa \"",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-0612": {
+    "codigo": "653-0612",
+    "descricao": "Formulário Ordem de serviço DGSEI",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-1630": {
+    "codigo": "653-1630",
+    "descricao": "Requerimento Ressarcimento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-1885": {
+    "codigo": "653-1885",
+    "descricao": "Serv. de Gestão de Sup. De Manutenção",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2127": {
+    "codigo": "653-2127",
+    "descricao": "Boletim de Atendimento Médico",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2618": {
+    "codigo": "653-2618",
+    "descricao": "Formulário Conta de custas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2619": {
+    "codigo": "653-2619",
+    "descricao": "Comanda de processo cível",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2620": {
+    "codigo": "653-2620",
+    "descricao": "Comanda de processo criminal",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2674": {
+    "codigo": "653-2674",
+    "descricao": "Formulário timbrado 3ª vice -nº 01- 90 gr",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2675": {
+    "codigo": "653-2675",
+    "descricao": "Formulário timbrado 3ª vice -nº 02 - 90 gr",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2676": {
+    "codigo": "653-2676",
+    "descricao": "Formulário timbrado 3ª vice -nº 03 - Vergê",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2677": {
+    "codigo": "653-2677",
+    "descricao": "Formulário Estatisticas de Atendimento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2678": {
+    "codigo": "653-2678",
+    "descricao": "Formulário Oficio de Solicitações Diversas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2679": {
+    "codigo": "653-2679",
+    "descricao": "Formulário Pedido Inicial Divórcio",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2680": {
+    "codigo": "653-2680",
+    "descricao": "Formulário Ped. Inicial Conversão de...",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2681": {
+    "codigo": "653-2681",
+    "descricao": "Formulário Ped. Inicial Separação Judicial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2764": {
+    "codigo": "653-2764",
+    "descricao": "Formulário Acordão Publicado",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2765": {
+    "codigo": "653-2765",
+    "descricao": "Formulário Despacho Publicado",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2766": {
+    "codigo": "653-2766",
+    "descricao": "Formulário Decisão Publicada",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2767": {
+    "codigo": "653-2767",
+    "descricao": "Formulário Peço Dia",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2768": {
+    "codigo": "653-2768",
+    "descricao": "Formulário em Mesa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2769": {
+    "codigo": "653-2769",
+    "descricao": "Formulário Expedição",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2783": {
+    "codigo": "653-2783",
+    "descricao": "Formulário Controle de Viagens",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2786": {
+    "codigo": "653-2786",
+    "descricao": "Formulário Taxa de Custas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2787": {
+    "codigo": "653-2787",
+    "descricao": "Etiqueta - Serviço de Expedição",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3001": {
+    "codigo": "653-3001",
+    "descricao": "Etiqueta de Código de Barras",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3002": {
+    "codigo": "653-3002",
+    "descricao": "Comprovante de Entrega - pessoa idoso",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3127": {
+    "codigo": "653-3127",
+    "descricao": "Filipetas ADILC/CEDIL Transferência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3129": {
+    "codigo": "653-3129",
+    "descricao": "Filipetas CEDIL - SCRD",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3131": {
+    "codigo": "653-3131",
+    "descricao": "Filipetas CEDIL - SCSD",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3132": {
+    "codigo": "653-3132",
+    "descricao": "Filpetas MOTIVO",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3133": {
+    "codigo": "653-3133",
+    "descricao": "Filipeta DVAP - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3134": {
+    "codigo": "653-3134",
+    "descricao": "Filipeta DPCE - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3135": {
+    "codigo": "653-3135",
+    "descricao": "Filipeta DVAM - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3136": {
+    "codigo": "653-3136",
+    "descricao": "Filipetas - LC 1 / 2 - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3137": {
+    "codigo": "653-3137",
+    "descricao": "Filipetas - LC 3 / 4 - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3138": {
+    "codigo": "653-3138",
+    "descricao": "Filipetas - LC 5 / 6 - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3139": {
+    "codigo": "653-3139",
+    "descricao": "Filipetas - LC 7 / 8 - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3140": {
+    "codigo": "653-3140",
+    "descricao": "Filipetas - LC 9 / 0 - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3141": {
+    "codigo": "653-3141",
+    "descricao": "Filipeta F / 1- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3142": {
+    "codigo": "653-3142",
+    "descricao": "Filipeta F / 2- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3143": {
+    "codigo": "653-3143",
+    "descricao": "Filipeta F / 3- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3144": {
+    "codigo": "653-3144",
+    "descricao": "Filipeta F / 4- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3145": {
+    "codigo": "653-3145",
+    "descricao": "Filipeta F / 0- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3146": {
+    "codigo": "653-3146",
+    "descricao": "Filipeta F / 7- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3147": {
+    "codigo": "653-3147",
+    "descricao": "Filipeta F / 8- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3149": {
+    "codigo": "653-3149",
+    "descricao": "Filipeta F / 9- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3150": {
+    "codigo": "653-3150",
+    "descricao": "Filipeta F / 6 VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3151": {
+    "codigo": "653-3151",
+    "descricao": "Filipeta F / 5- VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3153": {
+    "codigo": "653-3153",
+    "descricao": "Filipeta SCPP - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3155": {
+    "codigo": "653-3155",
+    "descricao": "Filipeta SCRD - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3156": {
+    "codigo": "653-3156",
+    "descricao": "Filipeta SHRAG - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3159": {
+    "codigo": "653-3159",
+    "descricao": "Filipeta SHRHC - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3232": {
+    "codigo": "653-3232",
+    "descricao": "Bloco URGENTE",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3233": {
+    "codigo": "653-3233",
+    "descricao": "Bloco BENEFICIO",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3234": {
+    "codigo": "653-3234",
+    "descricao": "Bloco Prevenção",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3521": {
+    "codigo": "653-3521",
+    "descricao": "Filipeta CEDIL / SCDR - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3522": {
+    "codigo": "653-3522",
+    "descricao": "Filipeta - CEDIL / SCSC",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3523": {
+    "codigo": "653-3523",
+    "descricao": "Filipeta - CEDIL / SCDR",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3524": {
+    "codigo": "653-3524",
+    "descricao": "Filipeta - SCMS - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3525": {
+    "codigo": "653-3525",
+    "descricao": "Filipeta - DPMA - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3526": {
+    "codigo": "653-3526",
+    "descricao": "Filipeta SCSC - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3550": {
+    "codigo": "653-3550",
+    "descricao": "Formulário Retirada Para Cópia",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-3606": {
+    "codigo": "653-3606",
+    "descricao": "Formulário Controle de Coleta",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-4224": {
+    "codigo": "653-4224",
+    "descricao": "Formulário Controle Interno",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-4226": {
+    "codigo": "653-4226",
+    "descricao": "Filipeta VEP - Protocolo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-4228": {
+    "codigo": "653-4228",
+    "descricao": "Filipeta CEDIL - VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-4269": {
+    "codigo": "653-4269",
+    "descricao": "Etiqueta P/ Ident. de Proc. E1 a E18",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-4283": {
+    "codigo": "653-4283",
+    "descricao": "Etiqueta P/ Ident. de Proc. P1 a P18",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-5436": {
+    "codigo": "653-5436",
+    "descricao": "Formulário Ação de Alimentos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-5437": {
+    "codigo": "653-5437",
+    "descricao": "Formulário Bloco de Encaminhamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-5442": {
+    "codigo": "653-5442",
+    "descricao": "Marcadores de Processo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-5569": {
+    "codigo": "653-5569",
+    "descricao": "Filipeta Extinção de Punibilidade",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-7311": {
+    "codigo": "653-7311",
+    "descricao": "Etiqueta \" Prioridade Pessoa portadora de deficiência\"",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-7388": {
+    "codigo": "653-7388",
+    "descricao": "Filipeta CEDIL - Diversos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-8176": {
+    "codigo": "653-8176",
+    "descricao": "Filipeta Extinção de Punibilidade",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-8177": {
+    "codigo": "653-8177",
+    "descricao": "Filipeta VEP - SVLM",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-8934": {
+    "codigo": "653-8934",
+    "descricao": "Filipeta CEDIL/SCSC",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-9886": {
+    "codigo": "653-9886",
+    "descricao": "Etiqueta P/ Ident. de Proc. T1 a T18",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-3530": {
+    "codigo": "654-3530",
+    "descricao": "Form. Retirada de processo 3ª câmara cível",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-3541": {
+    "codigo": "654-3541",
+    "descricao": "Guia de postagem de remessa local",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5480": {
+    "codigo": "654-5480",
+    "descricao": "Pedido de Certidão ao Cartório Distribuidor",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-9150": {
+    "codigo": "654-9150",
+    "descricao": "Etiqueta de identificação SEGAP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-8217": {
+    "codigo": "655-8217",
+    "descricao": "Papel Para Flip Chart",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-0596": {
+    "codigo": "656-0596",
+    "descricao": "Etiqueta Pessoa Idosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-0597": {
+    "codigo": "656-0597",
+    "descricao": "Etiqueta Pessoa Com Deficiência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-1103": {
+    "codigo": "656-1103",
+    "descricao": "Formulário Ressalva Nudeca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-3889": {
+    "codigo": "656-3889",
+    "descricao": "Formulário Ressalva CEJUSC",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0001": {
+    "codigo": "651-0001",
+    "descricao": "Capa Sócio Educativa Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0017": {
+    "codigo": "651-0017",
+    "descricao": "Capa Processo Execução           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0350": {
+    "codigo": "651-0350",
+    "descricao": "Capa para Processo VEP           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0351": {
+    "codigo": "651-0351",
+    "descricao": "Capa p/ Processo        Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0353": {
+    "codigo": "651-0353",
+    "descricao": "Capa da V.E.P Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0410": {
+    "codigo": "651-0410",
+    "descricao": "Capa de Autuação        Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0411": {
+    "codigo": "651-0411",
+    "descricao": "Capa de Habeas Corpus            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0412": {
+    "codigo": "651-0412",
+    "descricao": "Capa de Queixa Crime Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0461": {
+    "codigo": "651-0461",
+    "descricao": "Capa de Acidente do Trabalho Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0501": {
+    "codigo": "651-0501",
+    "descricao": "Capa de Processo Agravo Rec. Ord.         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0512": {
+    "codigo": "651-0512",
+    "descricao": "Capa Autuação Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0513": {
+    "codigo": "651-0513",
+    "descricao": "Capa de Justiça Gratuita         Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0514": {
+    "codigo": "651-0514",
+    "descricao": "Capa p/ Separação Consensual Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0567": {
+    "codigo": "651-0567",
+    "descricao": "Capa de Autuação        Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0568": {
+    "codigo": "651-0568",
+    "descricao": "Capa Agravo de Despacho           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0569": {
+    "codigo": "651-0569",
+    "descricao": "Capa de Processo Agravo           Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0570": {
+    "codigo": "651-0570",
+    "descricao": "Capa Ação Rescisória Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0571": {
+    "codigo": "651-0571",
+    "descricao": "Capa Agravo Instrum. Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0572": {
+    "codigo": "651-0572",
+    "descricao": "Capa de Agravo           Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0573": {
+    "codigo": "651-0573",
+    "descricao": "Capa Apelação Cível      Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0574": {
+    "codigo": "651-0574",
+    "descricao": "Capa Apelação Crim.      Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0575": {
+    "codigo": "651-0575",
+    "descricao": "Capa Conflito Jurisdicional       Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0576": {
+    "codigo": "651-0576",
+    "descricao": "Capa Habeas Corpus       Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0577": {
+    "codigo": "651-0577",
+    "descricao": "Capa Mandado de Segurança Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0578": {
+    "codigo": "651-0578",
+    "descricao": "Capa Requisitório        Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0580": {
+    "codigo": "651-0580",
+    "descricao": "Capa para Reclamação Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0581": {
+    "codigo": "651-0581",
+    "descricao": "Capa Recurso Em Sentido Estrito            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0582": {
+    "codigo": "651-0582",
+    "descricao": "Capa Revisão Criminal Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0992": {
+    "codigo": "651-0992",
+    "descricao": "Capa de Processo Inf. e Juventude          Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1043": {
+    "codigo": "651-1043",
+    "descricao": "Capa (Guarda) J. I. Juv. Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1044": {
+    "codigo": "651-1044",
+    "descricao": "Capa Proc. Adoção Inf. E Juv. Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1045": {
+    "codigo": "651-1045",
+    "descricao": "Capa Ação Divers. Infancia e Juventude.             Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1046": {
+    "codigo": "651-1046",
+    "descricao": "Capa Carta Precatória Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1047": {
+    "codigo": "651-1047",
+    "descricao": "Capa Tut. Infância e Juventude. Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1048": {
+    "codigo": "651-1048",
+    "descricao": "Capa Proc. Inf. E Juv.   Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1054": {
+    "codigo": "651-1054",
+    "descricao": "Capa Atrib. Ato Infr.    Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1101": {
+    "codigo": "651-1101",
+    "descricao": "Capa de registro Público          Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1104": {
+    "codigo": "651-1104",
+    "descricao": "Capa Processo Usucapião           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1126": {
+    "codigo": "651-1126",
+    "descricao": "Capa Autuação Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1127": {
+    "codigo": "651-1127",
+    "descricao": "Capa Habilitação p/ Casamento              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1138": {
+    "codigo": "651-1138",
+    "descricao": "Capa de Autuação         Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1139": {
+    "codigo": "651-1139",
+    "descricao": "Capa Autuação Averbação           Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1160": {
+    "codigo": "651-1160",
+    "descricao": "Capa Processo Vara de Fazenda Pública               Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1162": {
+    "codigo": "651-1162",
+    "descricao": "Capa Desapropriação      Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1163": {
+    "codigo": "651-1163",
+    "descricao": "Capa Processo Execução            Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1166": {
+    "codigo": "651-1166",
+    "descricao": "Capa Mandado de Segurança         Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1256": {
+    "codigo": "651-1256",
+    "descricao": "Capa Processo            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1354": {
+    "codigo": "651-1354",
+    "descricao": "Capa Auditoria Militar Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1380": {
+    "codigo": "651-1380",
+    "descricao": "Capa Reg. Tít. Documentos           Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1506": {
+    "codigo": "651-1506",
+    "descricao": "Capa Autuação              Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1626": {
+    "codigo": "651-1626",
+    "descricao": "Capa de Processo Oficio de Notas             Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1628": {
+    "codigo": "651-1628",
+    "descricao": "Capa de Processo Oficio de Notas             Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1629": {
+    "codigo": "651-1629",
+    "descricao": "Capa de Processo Oficio de Notas             Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1630": {
+    "codigo": "651-1630",
+    "descricao": "Capa Lavratura de Escritura         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1701": {
+    "codigo": "651-1701",
+    "descricao": "Capa Tribunal do Juri      Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1800": {
+    "codigo": "651-1800",
+    "descricao": "Capa Reg. Civil            Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1801": {
+    "codigo": "651-1801",
+    "descricao": "Capa Registro Civil Pessoa Jurídica          Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1820": {
+    "codigo": "651-1820",
+    "descricao": "Capa de Autuação (Vara de Órfãos)            Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1821": {
+    "codigo": "651-1821",
+    "descricao": "Capa Carta Precatória Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1822": {
+    "codigo": "651-1822",
+    "descricao": "Capa Inventário (Vara de Órfãos)             Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1899": {
+    "codigo": "651-1899",
+    "descricao": "Capa EMERJ        Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-2218": {
+    "codigo": "651-2218",
+    "descricao": "Capa Juizado Especial Criminal               Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-2219": {
+    "codigo": "651-2219",
+    "descricao": "Capa Juizado Especial Cível         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-1754": {
+    "codigo": "652-1754",
+    "descricao": "Capa Conselho Magistratura          Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-6348": {
+    "codigo": "652-6348",
+    "descricao": "Capa Proc. Adm. Aposentadoria                 Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7324": {
+    "codigo": "652-7324",
+    "descricao": "Capa Precatório Judicial (Alim)              Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7325": {
+    "codigo": "652-7325",
+    "descricao": "Capa Precatório Judicial            Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7698": {
+    "codigo": "652-7698",
+    "descricao": "Capa Centrais Penas e Med. Alter.            Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7699": {
+    "codigo": "652-7699",
+    "descricao": "Capa \" Justiça Terapêutica \"        Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-7800": {
+    "codigo": "652-7800",
+    "descricao": "Capa Administrativa       Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8296": {
+    "codigo": "652-8296",
+    "descricao": "Capa Precatório Judicial (Alim)              Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-8298": {
+    "codigo": "652-8298",
+    "descricao": "Capa Precatório Judicial            Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "652-9610": {
+    "codigo": "652-9610",
+    "descricao": "Capa Proceso Administrativo       Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-1033": {
+    "codigo": "653-1033",
+    "descricao": "Capa de Pagamento Magistrado               Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-1996": {
+    "codigo": "653-1996",
+    "descricao": "Capa de Processo Servidor         Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-2581": {
+    "codigo": "653-2581",
+    "descricao": "Capa de Processo Ação Inf. e Juventude              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-6187": {
+    "codigo": "653-6187",
+    "descricao": "Capa de Processo TCE Marrom",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-0276": {
+    "codigo": "654-0276",
+    "descricao": "Capa Juizado da Violência Doméstica verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-1720": {
+    "codigo": "654-1720",
+    "descricao": "Capa de processo - CPPD           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-1721": {
+    "codigo": "654-1721",
+    "descricao": "Capa de processo - CNJ            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-4163": {
+    "codigo": "654-4163",
+    "descricao": "Capa de processo Sigiloso - Presidência             Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5278": {
+    "codigo": "654-5278",
+    "descricao": "Capa de processo protocolo corregedoria             Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5471": {
+    "codigo": "654-5471",
+    "descricao": "Capa de processo corregedoria - Sigiloso            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5472": {
+    "codigo": "654-5472",
+    "descricao": "Capa de proc. correg. Magistrado - Sigiloso         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5473": {
+    "codigo": "654-5473",
+    "descricao": "Capa de proc. Corregedoria CNJ - Sigiloso           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5479": {
+    "codigo": "654-5479",
+    "descricao": "Capa de Autuação         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5481": {
+    "codigo": "654-5481",
+    "descricao": "Capa de processso administrativo           Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-8997": {
+    "codigo": "654-8997",
+    "descricao": "Capa de processo cautelar         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-2165": {
+    "codigo": "655-2165",
+    "descricao": "Capa de proc. Medida Protetiva             Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-6539": {
+    "codigo": "655-6539",
+    "descricao": "Capa de Proc. J. V. Doméstica Projeto . Violeta Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-6736": {
+    "codigo": "655-6736",
+    "descricao": "Capa de Processo Resolução CNJ             Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-8783": {
+    "codigo": "655-8783",
+    "descricao": "Capa de proc Núcleo de Penas e Medidas ...          Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-8876": {
+    "codigo": "655-8876",
+    "descricao": "Capa de Processo Precatório judicial       Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "656-0598": {
+    "codigo": "656-0598",
+    "descricao": "Capa de Processo Prioridade       Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0034": {
+    "codigo": "651-0034",
+    "descricao": "Cartão de Correspondencia Gab. Desemb.              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0036": {
+    "codigo": "651-0036",
+    "descricao": "Cartão de Correspondencia Gab. do Vice              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0041": {
+    "codigo": "651-0041",
+    "descricao": "Ficha Conc. Ing. Magistratura - Cartão Identif.     Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0047": {
+    "codigo": "651-0047",
+    "descricao": "Ficha Conc. Ing. Magistratura     Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0080": {
+    "codigo": "651-0080",
+    "descricao": "Ficha Pedido de Livro 105x74 mm            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0090": {
+    "codigo": "651-0090",
+    "descricao": "Ficha Controle Lubrificação 105x74 mm               Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0096": {
+    "codigo": "651-0096",
+    "descricao": "Ficha Empréstimo de livro         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0147": {
+    "codigo": "651-0147",
+    "descricao": "Ficha Controle 105x148 mm        Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0150": {
+    "codigo": "651-0150",
+    "descricao": "Ficha de Pagamento      Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0414": {
+    "codigo": "651-0414",
+    "descricao": "Ficha Individual de Réu 210 x148 mm Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0415": {
+    "codigo": "651-0415",
+    "descricao": "Ficha SIM 105x74 mm              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0416": {
+    "codigo": "651-0416",
+    "descricao": "Ficha NÃO 105x74 mm              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0463": {
+    "codigo": "651-0463",
+    "descricao": "Ficha Andamento de Processo 105x74 mm              Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0615": {
+    "codigo": "651-0615",
+    "descricao": "Ficha Ação Rescisória    Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0616": {
+    "codigo": "651-0616",
+    "descricao": "Ficha Agravo de Instrumento- Cam. Cível            Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0617": {
+    "codigo": "651-0617",
+    "descricao": "Ficha Apelação Cível     Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0618": {
+    "codigo": "651-0618",
+    "descricao": "Ficha Apelação Criminal          Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0622": {
+    "codigo": "651-0622",
+    "descricao": "Ficha Mandado de Segurança Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0883": {
+    "codigo": "651-0883",
+    "descricao": "Ficha Conta Corrente Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0993": {
+    "codigo": "651-0993",
+    "descricao": "Ficha Controle Menor Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0994": {
+    "codigo": "651-0994",
+    "descricao": "Ficha Andamento de Processo               Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0995": {
+    "codigo": "651-0995",
+    "descricao": "Ficha Trâmite Processual         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-0996": {
+    "codigo": "651-0996",
+    "descricao": "Ficha Prot. Serviço Social       Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1010": {
+    "codigo": "651-1010",
+    "descricao": "Ficha Investigação Menor         Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1016": {
+    "codigo": "651-1016",
+    "descricao": "Ficha Identificação do Menor     Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1076": {
+    "codigo": "651-1076",
+    "descricao": "Ficha Pautada 105x148 mm         Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1077": {
+    "codigo": "651-1077",
+    "descricao": "Ficha Pautada 105x148 mm         Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1078": {
+    "codigo": "651-1078",
+    "descricao": "Ficha Pautada 105x148 mm Rosa /Laranja             Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1079": {
+    "codigo": "651-1079",
+    "descricao": "Ficha Controle 105x148 mm Laranja         Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1080": {
+    "codigo": "651-1080",
+    "descricao": "Ficha Controle 105x148 mm        Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1081": {
+    "codigo": "651-1081",
+    "descricao": "Ficha Controle 105x148 mm        Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1083": {
+    "codigo": "651-1083",
+    "descricao": "Ficha Controle 210x148 mm Rosa / Laranja           Palha",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1084": {
+    "codigo": "651-1084",
+    "descricao": "Ficha Controle 105x148 mm Cinza           Cinza",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1090": {
+    "codigo": "651-1090",
+    "descricao": "Ficha Lisa 6x9 Lisa 148x210 mm            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1280": {
+    "codigo": "651-1280",
+    "descricao": "Ficha controle rosa     Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1402": {
+    "codigo": "651-1402",
+    "descricao": "Ficha Modelo (Dep. Jud) 200x125 mm Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1404": {
+    "codigo": "651-1404",
+    "descricao": "Ficha Controle - Verde 73x130 Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1405": {
+    "codigo": "651-1405",
+    "descricao": "Ficha Controle - Rosa 73x130 Rosa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1508": {
+    "codigo": "651-1508",
+    "descricao": "Ficha Andamento de Processo Verde",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1636": {
+    "codigo": "651-1636",
+    "descricao": "Ficha Abono assinatura laranja",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1704": {
+    "codigo": "651-1704",
+    "descricao": "Ficha Controle - Individual       Azul",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1783": {
+    "codigo": "651-1783",
+    "descricao": "Ficha Registro de Firma Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-1931": {
+    "codigo": "651-1931",
+    "descricao": "Ficha Médica    Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-7928": {
+    "codigo": "651-7928",
+    "descricao": "Ficha Formação de Cadastro/Adoção          Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "651-7929": {
+    "codigo": "651-7929",
+    "descricao": "Ficha-Formação Cadastro Criança            Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "653-7387": {
+    "codigo": "653-7387",
+    "descricao": "Ficha de Marcação        Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "654-5124": {
+    "codigo": "654-5124",
+    "descricao": "Cartão protocolo da presidência 105x74 mm           Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "655-8605": {
+    "codigo": "655-8605",
+    "descricao": "Cartão correspondência Corregedoria 105x74 mm                Branca",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
   }
 }
