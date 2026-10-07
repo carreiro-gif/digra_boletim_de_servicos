@@ -625,13 +625,39 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                 </div>
 
                 <div className="sm:col-span-5 flex flex-col justify-center">
-                  <div className="bg-white/10 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-blue-100 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="top-production-month-input" className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-blue-300" />
-                      <span>Mês de Produção:</span>
-                    </div>
-                    <strong className="text-white font-black">{productionMonth}</strong>
+                      <span>Mês de Produção: <span className="text-red-400 font-black">*</span></span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setProductionMonth(getCurrentProductionMonth())}
+                      className="text-[10px] text-blue-300 hover:text-white underline cursor-pointer font-semibold"
+                      title="Restaurar para o mês corrente automático do sistema"
+                    >
+                      ↺ Mês Atual
+                    </button>
                   </div>
+                  <div className="relative">
+                    <input
+                      id="top-production-month-input"
+                      type="text"
+                      list="production-months-list"
+                      value={productionMonth}
+                      onChange={(e) => {
+                        setProductionMonth(e.target.value);
+                        if (validationError) setValidationError(null);
+                      }}
+                      placeholder="Ex: Setembro / 2026"
+                      className={`w-full bg-white text-slate-900 border-2 rounded-xl px-3 py-2 text-sm font-black font-mono shadow-inner focus:ring-4 focus:ring-blue-400 focus:outline-none transition-all ${
+                        !productionMonth && validationError ? 'border-red-500 ring-2 ring-red-400' : 'border-blue-400'
+                      }`}
+                    />
+                  </div>
+                  <span className="text-[10px] text-blue-200 block mt-1 font-medium">
+                    100% editável para qualquer mês/ano (retroativo ou futuro)
+                  </span>
                 </div>
               </div>
             </div>
