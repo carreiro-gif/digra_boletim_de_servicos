@@ -1,0 +1,6 @@
+{
+  "name": "PJERJ DIGRA - Gestão de Ordens de Serviço Gráfica",
+  "description": "Sistema de Gestão e Emissão de Ordens de Serviço da Divisão Gráfica do Tribunal de Justiça do RJ (PJERJ). Logística de produção, cálculo de aproveitamento de corte e controle de consumo de papel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
