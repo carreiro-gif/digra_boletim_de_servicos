@@ -50,8 +50,8 @@ interface GraphicContextType {
       | 'packagesCount'
       | 'efficiencyPercent'
     > & { orderNumber?: string }
-  ) => ServiceOrder;
-  updateOrder: (id: string, data: Partial<ServiceOrder>) => void;
+  ) => Promise<ServiceOrder>;
+  updateOrder: (id: string, data: Partial<ServiceOrder>) => Promise<ServiceOrder | undefined>;
   deleteOrder: (id: string) => void;
   updateOrderStatus: (id: string, status: OrderStatus) => void;
   getNextOrderNumber: () => string;
@@ -438,7 +438,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Order CRUD
   const addOrder = useCallback(
-    (
+    async (
       data: Omit<
         ServiceOrder,
         | 'id'
@@ -453,7 +453,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         | 'packagesCount'
         | 'efficiencyPercent'
       > & { orderNumber?: string }
-    ): ServiceOrder => {
+    ): Promise<ServiceOrder> => {
       const orderNumber = data.orderNumber || getNextOrderNumber();
       const math = calculateOrderMath({
         blocksQty: data.blocksQty,
@@ -497,9 +497,11 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (isFirebaseConfigured && db) {
-        setDoc(doc(db, 'orders', id), newOrder).catch((e) =>
-          console.warn('[Firestore] Sincronização remota orders:', e?.message || e)
-        );
+        try {
+          await setDoc(doc(db, 'orders', id), newOrder);
+        } catch (e: any) {
+          console.warn('[Firestore] Sincronização remota orders:', e?.message || e);
+        }
       }
 
       return newOrder;
@@ -508,7 +510,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 
   const updateOrder = useCallback(
-    (id: string, data: Partial<ServiceOrder>) => {
+    async (id: string, data: Partial<ServiceOrder>): Promise<ServiceOrder | undefined> => {
+      let resultOrder: ServiceOrder | undefined;
+
       setOrders((prev) => {
         const updated = prev.map((ord) => {
           if (ord.id !== id) return ord;
@@ -544,18 +548,23 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
             efficiencyPercent: math.efficiencyPercent,
           };
 
-          if (isFirebaseConfigured && db) {
-            setDoc(doc(db, 'orders', id), result).catch((e) =>
-              console.warn('[Firestore] Sincronização remota orders:', e?.message || e)
-            );
-          }
-
+          resultOrder = result;
           return result;
         });
 
         broadcastUpdate('SYNC_ORDERS', updated);
         return updated;
       });
+
+      if (isFirebaseConfigured && db && resultOrder) {
+        try {
+          await setDoc(doc(db, 'orders', id), resultOrder);
+        } catch (e: any) {
+          console.warn('[Firestore] Sincronização remota orders:', e?.message || e);
+        }
+      }
+
+      return resultOrder;
     },
     [broadcastUpdate]
   );

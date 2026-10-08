@@ -18,7 +18,6 @@ import {
 import {
   FileText,
   Printer,
-  Save,
   CheckCircle2,
   Calculator,
   Search,
@@ -63,6 +62,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
 
   // Modo Edição: armazena o id da O.S. sendo editada, ou null para nova O.S.
   const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   // Form State: Mês de produção autopreenchido de forma inteligente (ex: "Outubro / 2026")
   const [bsNumber, setBsNumber] = useState<string>(''); // Campo visual e obrigatório do Boletim de Serviço (BS)
@@ -355,123 +355,131 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     setTimeout(() => setSuccessToast(null), 4000);
   };
 
-  // Submit Handler: Unifica Salvamento no Firestore e Abertura da Impressão
-  const handleSubmit = (shouldPrintAfterSave: boolean = false) => {
+  // Submit Handler: Unifica Gravação no Firestore e Abertura Automática da Impressão em 1 Único Clique
+  const handleSaveAndPrint = async () => {
+    if (isSaving) return;
+
     if (!validateForm()) return;
     if (!matchedService || !activePaper || !activeFormat) return;
 
-    const cleanProductionMonth = productionMonth.trim() || getCurrentProductionMonth();
-    const cleanBsNumber = bsNumber.trim();
-    // Associação de Nomenclatura e Data: "BS [Número] - [CódigoDoMaterial]" (Exemplo: BS 17 - 654-5125)
-    const finalOfficialKey = cleanBsNumber && matchedService
-      ? `BS ${cleanBsNumber} - ${matchedService.code}`
-      : (cleanBsNumber ? `BS ${cleanBsNumber}` : (editingOrderId ? orderNumber : getNextOrderNumber()));
+    setIsSaving(true);
+    try {
+      const cleanProductionMonth = productionMonth.trim() || getCurrentProductionMonth();
+      const cleanBsNumber = bsNumber.trim();
+      // Nomenclatura oficial: "BS [Número] - [CódigoDoMaterial]" (Ex: BS 17 - 654-5125)
+      const finalOfficialKey = cleanBsNumber && matchedService
+        ? `BS ${cleanBsNumber} - ${matchedService.code}`
+        : (cleanBsNumber ? `BS ${cleanBsNumber}` : (editingOrderId ? orderNumber : getNextOrderNumber()));
 
-    if (editingOrderId) {
-      // MODO EDIÇÃO: Atualizar registro existente no Firestore
-      const updatedFields: Partial<ServiceOrder> = {
-        orderNumber: finalOfficialKey,
-        bsNumber: cleanBsNumber,
-        bsCodeKey: finalOfficialKey,
-        productionMonth: cleanProductionMonth,
-        dateEmission: cleanProductionMonth, // compatibilidade
-        createdBy,
-        machine,
-        observation,
-        serviceId: matchedService.id,
-        serviceCode: matchedService.code,
-        serviceName: matchedService.name,
-        serviceCategory: matchedService.category,
-        paperId: activePaper.id,
-        paperCode: activePaper.code,
-        paperName: activePaper.name,
-        paperWidthMm: activePaper.widthMm,
-        paperHeightMm: activePaper.heightMm,
-        packageSheets: activePaper.packageSheets,
-        cutFormatId: activeFormat.id,
-        cutFormatName: activeFormat.name,
-        cutWidthMm: activeFormat.widthMm,
-        cutHeightMm: activeFormat.heightMm,
-        finalCutSize: finalCutSize.trim() || undefined,
-        blocksQty: Math.max(0, blocksQty),
-        sheetsPerBlock: Math.max(0, sheetsPerBlock),
-        ways: Math.max(0, ways),
-        imagesPerPlate: Math.max(1, imagesPerPlate),
-        breakMargin: Math.max(0, breakMargin),
-      };
+      if (editingOrderId) {
+        // MODO EDIÇÃO: Atualizar registro existente no Firestore PRIMEIRO
+        const updatedFields: Partial<ServiceOrder> = {
+          orderNumber: finalOfficialKey,
+          bsNumber: cleanBsNumber,
+          bsCodeKey: finalOfficialKey,
+          productionMonth: cleanProductionMonth,
+          dateEmission: cleanProductionMonth,
+          createdBy,
+          machine,
+          observation,
+          serviceId: matchedService.id,
+          serviceCode: matchedService.code,
+          serviceName: matchedService.name,
+          serviceCategory: matchedService.category,
+          paperId: activePaper.id,
+          paperCode: activePaper.code,
+          paperName: activePaper.name,
+          paperWidthMm: activePaper.widthMm,
+          paperHeightMm: activePaper.heightMm,
+          packageSheets: activePaper.packageSheets,
+          cutFormatId: activeFormat.id,
+          cutFormatName: activeFormat.name,
+          cutWidthMm: activeFormat.widthMm,
+          cutHeightMm: activeFormat.heightMm,
+          finalCutSize: finalCutSize.trim() || undefined,
+          blocksQty: Math.max(0, blocksQty),
+          sheetsPerBlock: Math.max(0, sheetsPerBlock),
+          ways: Math.max(0, ways),
+          imagesPerPlate: Math.max(1, imagesPerPlate),
+          breakMargin: Math.max(0, breakMargin),
+        };
 
-      updateOrder(editingOrderId, updatedFields);
+        const updatedOrder = await updateOrder(editingOrderId, updatedFields);
 
-      const existing = orders.find((o) => o.id === editingOrderId);
-      const mergedOrder: ServiceOrder = {
-        ...(existing || ({} as ServiceOrder)),
-        ...updatedFields,
-        id: editingOrderId,
-        orderNumber: finalOfficialKey,
-        bsNumber: cleanBsNumber,
-        bsCodeKey: finalOfficialKey,
-        productionMonth: cleanProductionMonth,
-        totalFinalSheets: calculation.totalFinalSheets,
-        yieldPerSheet: calculation.yieldPerSheet,
-        cutsDescription: calculation.cutsDescription,
-        fullSheetsNeeded: calculation.fullSheetsNeeded,
-        totalFactorySheetsUsed: calculation.totalFactorySheetsUsed,
-        packagesCount: calculation.packagesCount,
-        efficiencyPercent: calculation.efficiencyPercent,
-        createdAt: existing?.createdAt || Date.now(),
-        updatedAt: Date.now(),
-      } as ServiceOrder;
+        const existing = orders.find((o) => o.id === editingOrderId);
+        const mergedOrder: ServiceOrder = updatedOrder || ({
+          ...(existing || ({} as ServiceOrder)),
+          ...updatedFields,
+          id: editingOrderId,
+          orderNumber: finalOfficialKey,
+          bsNumber: cleanBsNumber,
+          bsCodeKey: finalOfficialKey,
+          productionMonth: cleanProductionMonth,
+          totalFinalSheets: calculation.totalFinalSheets,
+          yieldPerSheet: calculation.yieldPerSheet,
+          cutsDescription: calculation.cutsDescription,
+          fullSheetsNeeded: calculation.fullSheetsNeeded,
+          totalFactorySheetsUsed: calculation.totalFactorySheetsUsed,
+          packagesCount: calculation.packagesCount,
+          efficiencyPercent: calculation.efficiencyPercent,
+          createdAt: existing?.createdAt || Date.now(),
+          updatedAt: Date.now(),
+        } as ServiceOrder);
 
-      setSuccessToast(`O.S. ${finalOfficialKey} atualizada no Firebase Firestore com sucesso!`);
-      setTimeout(() => setSuccessToast(null), 4000);
+        setSuccessToast(`O.S. ${finalOfficialKey} atualizada no Firebase Firestore com sucesso!`);
+        setTimeout(() => setSuccessToast(null), 4000);
 
-      if (shouldPrintAfterSave) {
+        // Disparo imediato da abertura automática do modal de impressão (PrintA4OrderModal)
         onPrintOrder(mergedOrder);
-      }
 
-      resetFormToBlank();
-    } else {
-      // MODO CRIAÇÃO: Gerar registro oficial "BS [Número] - [CódigoDoMaterial]" e salvar no Firestore
-      const newOrder = addOrder({
-        orderNumber: finalOfficialKey,
-        bsNumber: cleanBsNumber,
-        bsCodeKey: finalOfficialKey,
-        productionMonth: cleanProductionMonth,
-        dateEmission: cleanProductionMonth, // compatibilidade
-        createdBy,
-        machine,
-        status: 'Aguardando Início',
-        observation,
-        serviceId: matchedService.id,
-        serviceCode: matchedService.code,
-        serviceName: matchedService.name,
-        serviceCategory: matchedService.category,
-        paperId: activePaper.id,
-        paperCode: activePaper.code,
-        paperName: activePaper.name,
-        paperWidthMm: activePaper.widthMm,
-        paperHeightMm: activePaper.heightMm,
-        packageSheets: activePaper.packageSheets,
-        cutFormatId: activeFormat.id,
-        cutFormatName: activeFormat.name,
-        cutWidthMm: activeFormat.widthMm,
-        cutHeightMm: activeFormat.heightMm,
-        finalCutSize: finalCutSize.trim() || undefined,
-        blocksQty: Math.max(0, blocksQty),
-        sheetsPerBlock: Math.max(0, sheetsPerBlock),
-        ways: Math.max(0, ways),
-        imagesPerPlate: Math.max(1, imagesPerPlate),
-        breakMargin: Math.max(0, breakMargin),
-      });
+        resetFormToBlank();
+      } else {
+        // MODO CRIAÇÃO: Gravação no Firebase Firestore PRIMEIRO (e alimenta o Kanban)
+        const newOrder = await addOrder({
+          orderNumber: finalOfficialKey,
+          bsNumber: cleanBsNumber,
+          bsCodeKey: finalOfficialKey,
+          productionMonth: cleanProductionMonth,
+          dateEmission: cleanProductionMonth,
+          createdBy,
+          machine,
+          status: 'Aguardando Início',
+          observation,
+          serviceId: matchedService.id,
+          serviceCode: matchedService.code,
+          serviceName: matchedService.name,
+          serviceCategory: matchedService.category,
+          paperId: activePaper.id,
+          paperCode: activePaper.code,
+          paperName: activePaper.name,
+          paperWidthMm: activePaper.widthMm,
+          paperHeightMm: activePaper.heightMm,
+          packageSheets: activePaper.packageSheets,
+          cutFormatId: activeFormat.id,
+          cutFormatName: activeFormat.name,
+          cutWidthMm: activeFormat.widthMm,
+          cutHeightMm: activeFormat.heightMm,
+          finalCutSize: finalCutSize.trim() || undefined,
+          blocksQty: Math.max(0, blocksQty),
+          sheetsPerBlock: Math.max(0, sheetsPerBlock),
+          ways: Math.max(0, ways),
+          imagesPerPlate: Math.max(1, imagesPerPlate),
+          breakMargin: Math.max(0, breakMargin),
+        });
 
-      setSuccessToast(`O.S. ${newOrder.orderNumber} salva no Firebase Firestore com sucesso!`);
-      setTimeout(() => setSuccessToast(null), 4000);
+        setSuccessToast(`O.S. ${newOrder.orderNumber} gravada no Firebase Firestore com sucesso!`);
+        setTimeout(() => setSuccessToast(null), 4000);
 
-      if (shouldPrintAfterSave) {
+        // Disparo imediato da abertura automática do modal de impressão (PrintA4OrderModal)
         onPrintOrder(newOrder);
-      }
 
-      resetFormToBlank();
+        resetFormToBlank();
+      }
+    } catch (err: any) {
+      console.error('[PJERJ DIGRA] Erro ao gravar O.S.:', err);
+      setValidationError(`Falha ao gravar no Firestore: ${err?.message || err}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -1150,34 +1158,34 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
               </div>
             </div>
 
-            {/* Ações: Salvar e Gerar PDF com Validação e Persistência Automática */}
+            {/* Ação Unificada: Gravação no Firestore e Abertura Automática da Impressão em 1 Único Clique */}
             <div className="pt-3 flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                onClick={() => handleSubmit(false)}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all active:scale-95 text-sm cursor-pointer"
+                onClick={handleSaveAndPrint}
+                disabled={isSaving}
+                className="flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 disabled:opacity-60 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95 text-sm cursor-pointer"
               >
-                <Save className="w-4 h-4" />
-                <span>
-                  {editingOrderId ? 'Atualizar O.S. no Firestore' : 'Salvar Registro de O.S.'}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSubmit(true)}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all active:scale-95 text-sm cursor-pointer"
-              >
-                <Printer className="w-4 h-4" />
-                <span>
-                  {editingOrderId ? 'Atualizar e Gerar PDF (A4)' : 'Gerar PDF para Produção (A4)'}
-                </span>
+                {isSaving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Salvando no Firestore e Abrindo PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Printer className="w-4 h-4" />
+                    <span>
+                      {editingOrderId ? 'Atualizar e Gerar PDF (A4)' : 'Gerar PDF para Produção (A4)'}
+                    </span>
+                  </>
+                )}
               </button>
 
               {editingOrderId && (
                 <button
                   type="button"
                   onClick={resetFormToBlank}
+                  disabled={isSaving}
                   className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-xl transition-colors font-medium border border-slate-300 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
