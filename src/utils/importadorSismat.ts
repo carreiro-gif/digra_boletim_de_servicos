@@ -7,6 +7,7 @@ import { db, isFirebaseConfigured } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import sismatPreloadData from '../data/sismatHistoricoPreload.json';
 import fichasTecnicasRaw from '../data/fichas_tecnicas.json';
+import { initialServices } from '../data/initialData.ts';
 
 export interface SismatFichaTecnica {
   bsNumber: string;
@@ -600,7 +601,7 @@ export function buscarUltimaOSPorCodigo(
 /**
  * LÓGICA DE APRENDIZADO CONTÍNUO:
  * Ao digitar qualquer código, retorna os parâmetros da O.S. mais recente desse código
- * para autocompletar Papel, Formato de Corte, Quantidade e Sobra.
+ * para autocompletar Papel, Formato de Corte para Impressão, Corte Final, Quantidade e Sobra.
  */
 export function obterParametrosAprendizadoContinuo(
   codigo: string,
@@ -612,6 +613,7 @@ export function obterParametrosAprendizadoContinuo(
   order: ServiceOrder | null;
   paperId: string;
   cutFormatId: string;
+  finalCutSize: string;
   blocksQty: number;
   sheetsPerBlock: number;
   ways: number;
@@ -623,6 +625,12 @@ export function obterParametrosAprendizadoContinuo(
   const clean = normalizeMaterialCode(codigo);
   const ultimaOS = buscarUltimaOSPorCodigo(codigo, ordersList);
 
+  const extractSize = (txt: string): string => {
+    if (!txt) return '';
+    const m = txt.match(/(\d+)\s*[xX×]\s*(\d+)\s*(?:mm)?/i);
+    return m ? `${m[1]}x${m[2]} mm` : '';
+  };
+
   if (!ultimaOS) {
     // Fallback: Busca na base estática consolidada fichas_tecnicas.json
     const ficha =
@@ -631,9 +639,37 @@ export function obterParametrosAprendizadoContinuo(
         (f: any) => normalizeMaterialCode(f.codigo) === clean
       );
 
-    if (ficha) {
-      // Localiza papel adequado
-      const pName = (ficha.papel || '').toLowerCase();
+    // Busca no preload do SISMAT
+    const preload = (sismatPreloadData as any[])?.find(
+      (p: any) => normalizeMaterialCode(p.materialCode) === clean
+    );
+
+    // Busca no catálogo oficial
+    const srv = (initialServices as any[])?.find(
+      (s: any) => normalizeMaterialCode(s.codigo) === clean
+    );
+
+    if (ficha || preload || srv) {
+      // 1. Extração do Corte Final (Tamanho do Trabalho Acabado)
+      let finalCut = '';
+      if (ficha?.formatoCorte) {
+        finalCut = extractSize(ficha.formatoCorte) || ficha.formatoCorte;
+      }
+      if (!finalCut && preload?.formato) {
+        finalCut = extractSize(preload.formato);
+      }
+      if (!finalCut && preload?.cutWidthMm && preload?.cutHeightMm) {
+        finalCut = `${preload.cutWidthMm}x${preload.cutHeightMm} mm`;
+      }
+      if (!finalCut && srv?.descricao) {
+        finalCut = extractSize(srv.descricao);
+      }
+      if (!finalCut && ficha?.descricao) {
+        finalCut = extractSize(ficha.descricao);
+      }
+
+      // 2. Localiza papel adequado
+      const pName = (ficha?.papel || preload?.paperName || '').toLowerCase();
       let matchedPaper = papersList.find((p) => p.name.toLowerCase().includes(pName));
       if (!matchedPaper) {
         if (pName.includes('adesiv')) matchedPaper = papersList.find((p) => p.code === 'AD-180');
@@ -643,36 +679,78 @@ export function obterParametrosAprendizadoContinuo(
         else matchedPaper = papersList.find((p) => p.code === 'OFF-75') || papersList[0];
       }
 
-      // Localiza formato de corte adequado
-      const fName = (ficha.formatoCorte || '').toLowerCase();
-      let matchedFormat = formatsList.find((f) => f.name.toLowerCase() === fName);
-      if (!matchedFormat) {
-        if (fName.includes('40x60') || fName.includes('40 x 60')) matchedFormat = formatsList.find((f) => f.name.includes('40x60') || f.name.includes('120×70')) || formatsList[0];
-        else if (fName.includes('a5') || fName.includes('148x210') || fName.includes('210x148')) matchedFormat = formatsList.find((f) => f.name === 'A5');
-        else if (fName.includes('1/3') || fName.includes('210x105')) matchedFormat = formatsList.find((f) => f.name === '1/3 A4');
-        else if (fName.includes('a6') || fName.includes('105x148')) matchedFormat = formatsList.find((f) => f.name === 'A6');
-        else matchedFormat = formatsList.find((f) => f.name === 'A4') || formatsList[0];
-      }
+      // 3. Localiza Corte para Impressão estritamente entre as 12 opções cadastradas
+      const fName = (ficha?.formatoCorte || preload?.formato || '').toLowerCase();
+      let matchedFormat: CutFormat | undefined;
+      if (fName.includes('sra3')) matchedFormat = formatsList.find((f) => f.name === 'SRA3');
+      else if (fName.includes('sra4')) matchedFormat = formatsList.find((f) => f.name === 'SRA4');
+      else if (fName.includes('a3')) matchedFormat = formatsList.find((f) => f.name === 'A3');
+      else if (fName.includes('duplo of') || fName.includes('oficio')) matchedFormat = formatsList.find((f) => f.name === 'Duplo Ofício');
+      else if (fName.includes('carta')) matchedFormat = formatsList.find((f) => f.name === 'Carta');
+      else if (fName.includes('placa')) matchedFormat = formatsList.find((f) => f.name === 'Placa');
+      else if (fName.includes('simples')) matchedFormat = formatsList.find((f) => f.name === 'Simples');
+      else if (fName.includes('grafit')) matchedFormat = formatsList.find((f) => f.name === 'Grafit Capa');
+      else if (fName.includes('pacote')) matchedFormat = formatsList.find((f) => f.name === 'Pacote');
+      else if (fName.includes('revista')) matchedFormat = formatsList.find((f) => f.name === 'Revista');
+      else if (fName.includes('ficha')) matchedFormat = formatsList.find((f) => f.name === 'Ficha');
+      else matchedFormat = formatsList.find((f) => f.name === 'A4') || formatsList[0];
 
       return {
         found: true,
         order: null,
         paperId: matchedPaper?.id || papersList[0]?.id || '',
         cutFormatId: matchedFormat?.id || formatsList[0]?.id || '',
-        blocksQty: 10,
-        sheetsPerBlock: 50,
-        ways: 1,
-        imagesPerPlate: 1,
-        breakMargin: 10,
-        machine: 'Heidelberg Bicolor',
-        sourceDescription: `Ficha Técnica SISMAT - ${ficha.descricao}`,
+        finalCutSize: finalCut || '210x297 mm',
+        blocksQty: preload?.blocksQty || 10,
+        sheetsPerBlock: preload?.sheetsPerBlock || 50,
+        ways: preload?.ways || 1,
+        imagesPerPlate: preload?.imagesPerPlate || 1,
+        breakMargin: preload?.breakMargin || 10,
+        machine: preload?.machine || 'Heidelberg Bicolor',
+        sourceDescription: `Ficha Técnica SISMAT - ${ficha?.descricao || preload?.trabalho || srv?.descricao}`,
       };
     }
 
     return null;
   }
 
-  // Localiza o papel correspondente
+  // 1. Extração do Corte Final (Tamanho do Trabalho Acabado) a partir da O.S. mais recente
+  let finalCut = ultimaOS.finalCutSize || '';
+  if (!finalCut) {
+    // Se a O.S. anterior tiver dimensões menores que folha de impressão (ex: 105x74 mm, 210x148 mm)
+    if (ultimaOS.cutWidthMm && ultimaOS.cutHeightMm && (ultimaOS.cutWidthMm < 210 || ultimaOS.cutHeightMm < 280)) {
+      finalCut = `${ultimaOS.cutWidthMm}x${ultimaOS.cutHeightMm} mm`;
+    } else {
+      finalCut = extractSize(ultimaOS.serviceName) || extractSize(ultimaOS.cutsDescription) || '';
+    }
+  }
+  if (!finalCut) {
+    const rawFicha = (fichasTecnicasRaw as Record<string, any>)[codigo] ||
+      Object.values(fichasTecnicasRaw as Record<string, any>).find(
+        (f: any) => normalizeMaterialCode(f.codigo) === clean
+      );
+    if (rawFicha?.formatoCorte) {
+      finalCut = extractSize(rawFicha.formatoCorte) || rawFicha.formatoCorte;
+    }
+  }
+  if (!finalCut) {
+    const preload = (sismatPreloadData as any[])?.find(
+      (p: any) => normalizeMaterialCode(p.materialCode) === clean
+    );
+    if (preload) {
+      finalCut = extractSize(preload.formato) || (preload.cutWidthMm ? `${preload.cutWidthMm}x${preload.cutHeightMm} mm` : '');
+    }
+  }
+  if (!finalCut) {
+    const srv = (initialServices as any[])?.find(
+      (s: any) => normalizeMaterialCode(s.codigo) === clean
+    );
+    if (srv) {
+      finalCut = extractSize(srv.descricao);
+    }
+  }
+
+  // 2. Localiza o papel correspondente
   let matchedPaperId = ultimaOS.paperId;
   if (!papersList.some((p) => p.id === matchedPaperId)) {
     const fallbackPaper = papersList.find(
@@ -681,22 +759,37 @@ export function obterParametrosAprendizadoContinuo(
     if (fallbackPaper) matchedPaperId = fallbackPaper.id;
   }
 
-  // Localiza o formato de corte correspondente
+  // 3. Localiza Corte para Impressão estritamente entre as 12 opções cadastradas
   let matchedFormatId = ultimaOS.cutFormatId;
-  if (!formatsList.some((f) => f.id === matchedFormatId)) {
-    const fallbackFormat = formatsList.find(
-      (f) =>
-        (f.widthMm === ultimaOS.cutWidthMm && f.heightMm === ultimaOS.cutHeightMm) ||
-        (f.widthMm === ultimaOS.cutHeightMm && f.heightMm === ultimaOS.cutWidthMm)
+  let matchedFormat = formatsList.find((f) => f.id === matchedFormatId);
+  if (!matchedFormat) {
+    matchedFormat = formatsList.find(
+      (f) => f.name.toLowerCase() === (ultimaOS.cutFormatName || '').toLowerCase()
     );
-    if (fallbackFormat) matchedFormatId = fallbackFormat.id;
   }
+  if (!matchedFormat) {
+    const nameLower = (ultimaOS.cutFormatName || '').toLowerCase();
+    if (nameLower.includes('simples')) matchedFormat = formatsList.find((f) => f.name === 'Simples');
+    else if (nameLower.includes('duplo of') || nameLower.includes('oficio')) matchedFormat = formatsList.find((f) => f.name === 'Duplo Ofício');
+    else if (nameLower.includes('sra3')) matchedFormat = formatsList.find((f) => f.name === 'SRA3');
+    else if (nameLower.includes('a3')) matchedFormat = formatsList.find((f) => f.name === 'A3');
+    else if (nameLower.includes('sra4')) matchedFormat = formatsList.find((f) => f.name === 'SRA4');
+    else if (nameLower.includes('carta')) matchedFormat = formatsList.find((f) => f.name === 'Carta');
+    else if (nameLower.includes('placa')) matchedFormat = formatsList.find((f) => f.name === 'Placa');
+    else if (nameLower.includes('pacote')) matchedFormat = formatsList.find((f) => f.name === 'Pacote');
+    else if (nameLower.includes('revista')) matchedFormat = formatsList.find((f) => f.name === 'Revista');
+    else if (nameLower.includes('ficha')) matchedFormat = formatsList.find((f) => f.name === 'Ficha');
+    else if (nameLower.includes('grafit')) matchedFormat = formatsList.find((f) => f.name === 'Grafit Capa');
+    else matchedFormat = formatsList.find((f) => f.name === 'A4') || formatsList[0];
+  }
+  matchedFormatId = matchedFormat?.id || formatsList[0]?.id || '';
 
   return {
     found: true,
     order: ultimaOS,
     paperId: matchedPaperId,
     cutFormatId: matchedFormatId,
+    finalCutSize: finalCut || '210x297 mm',
     blocksQty: ultimaOS.blocksQty,
     sheetsPerBlock: ultimaOS.sheetsPerBlock || 50,
     ways: ultimaOS.ways || 1,

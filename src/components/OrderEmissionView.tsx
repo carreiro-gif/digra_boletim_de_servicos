@@ -7,6 +7,7 @@ import {
   getProductionMonthOptions,
   MONTHS_PT,
 } from '../utils/graphicMath';
+import { PRINT_CUT_FORMATS } from '../data/initialData.ts';
 import { CuttingSchematic } from './CuttingSchematic';
 import { PjerjLogo } from './PjerjLogo';
 import { ServiceOrder } from '../types';
@@ -97,9 +98,10 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
   // Busca Inteligente de Código (Ignorando traços / hífens)
   const [serviceCodeInput, setServiceCodeInput] = useState<string>('');
 
-  // Papel e Formato (Em branco / não selecionado inicialmente)
+  // Papel, Corte para Impressão e Corte Final (Produto Acabado)
   const [selectedPaperId, setSelectedPaperId] = useState<string>('');
   const [selectedFormatId, setSelectedFormatId] = useState<string>('');
+  const [finalCutSize, setFinalCutSize] = useState<string>(''); // Corte Final (Tamanho do Trabalho / Refile Produto Acabado)
 
   // Entradas de Produção
   const [blocksQty, setBlocksQty] = useState<number>(0);
@@ -114,6 +116,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     productionMonth: string;
     paperName: string;
     cutFormatName: string;
+    finalCutSize: string;
     blocksQty: number;
     breakMargin: number;
     machine: string;
@@ -150,7 +153,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
 
   // LÓGICA DE APRENDIZADO CONTÍNUO ATIVA:
   // Ao digitar qualquer código no formulário, o sistema busca a O.S. mais recente desse código
-  // e autocompleta o Papel, Formato de Corte, Quantidade e Sobra com base na última alteração feita.
+  // e autocompleta o Papel, Corte para Impressão, Corte Final, Quantidade e Sobra com base na última alteração feita.
   React.useEffect(() => {
     const clean = normalizeCode(serviceCodeInput);
     if (!clean || clean.length < 3) {
@@ -167,11 +170,12 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
       return;
     }
 
-    const aprendizado = obterParametrosAprendizadoContinuo(clean, orders, papers, formats);
+    const aprendizado = obterParametrosAprendizadoContinuo(clean, orders, papers, PRINT_CUT_FORMATS);
     if (aprendizado && aprendizado.found) {
       lastAppliedCodeRef.current = clean;
       if (aprendizado.paperId) setSelectedPaperId(aprendizado.paperId);
       if (aprendizado.cutFormatId) setSelectedFormatId(aprendizado.cutFormatId);
+      if (aprendizado.finalCutSize !== undefined) setFinalCutSize(aprendizado.finalCutSize);
       if (aprendizado.blocksQty !== undefined) setBlocksQty(aprendizado.blocksQty);
       if (aprendizado.sheetsPerBlock !== undefined) setSheetsPerBlock(aprendizado.sheetsPerBlock);
       if (aprendizado.ways !== undefined) setWays(aprendizado.ways);
@@ -180,13 +184,14 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
       if (aprendizado.machine && !machine) setMachine(aprendizado.machine);
 
       const paperObj = papers.find((p) => p.id === aprendizado.paperId);
-      const formatObj = formats.find((f) => f.id === aprendizado.cutFormatId);
+      const formatObj = PRINT_CUT_FORMATS.find((f) => f.id === aprendizado.cutFormatId) || formats.find((f) => f.id === aprendizado.cutFormatId);
 
       setLearningInfo({
         orderNumber: aprendizado.order?.orderNumber || 'Ficha SISMAT Oficial',
         productionMonth: aprendizado.order?.productionMonth || 'Histórico Consolidado',
         paperName: aprendizado.order?.paperName || paperObj?.name || '',
         cutFormatName: aprendizado.order?.cutFormatName || formatObj?.name || '',
+        finalCutSize: aprendizado.finalCutSize || '',
         blocksQty: aprendizado.blocksQty,
         breakMargin: aprendizado.breakMargin,
         machine: aprendizado.machine,
@@ -207,6 +212,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     setServiceCodeInput('');
     setSelectedPaperId('');
     setSelectedFormatId('');
+    setFinalCutSize('');
     setBlocksQty(0);
     setSheetsPerBlock(0);
     setWays(0);
@@ -218,13 +224,13 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     setOrderNumber(getNextOrderNumber());
   };
 
-  // Papel e Formato selecionados
+  // Papel e Formato selecionados (Formato estritamente dentre as 12 opções de Corte para Impressão)
   const activePaper = useMemo(() => {
     return papers.find((p) => p.id === selectedPaperId) || null;
   }, [papers, selectedPaperId]);
 
   const activeFormat = useMemo(() => {
-    return formats.find((f) => f.id === selectedFormatId) || null;
+    return PRINT_CUT_FORMATS.find((f) => f.id === selectedFormatId) || formats.find((f) => f.id === selectedFormatId) || null;
   }, [formats, selectedFormatId]);
 
   // Cálculo Gráfico em Tempo Real com Quebra em Unidades de Corte:
@@ -281,7 +287,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     if (!productionMonth || !productionMonth.trim()) missing.push('Mês de Produção');
     if (!matchedService) missing.push('Código do Serviço (válido no catálogo)');
     if (!activePaper) missing.push('Papel de Fábrica');
-    if (!activeFormat) missing.push('Formato de Corte ABNT');
+    if (!activeFormat) missing.push('Corte para Impressão');
 
     if (missing.length > 0) {
       setValidationError(
@@ -321,6 +327,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     setServiceCodeInput(order.serviceCode || '');
     setSelectedPaperId(order.paperId || '');
     setSelectedFormatId(order.cutFormatId || '');
+    setFinalCutSize(order.finalCutSize || '');
     setBlocksQty(order.blocksQty || 0);
     setSheetsPerBlock(order.sheetsPerBlock || 0);
     setWays(order.ways || 0);
@@ -385,6 +392,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
         cutFormatName: activeFormat.name,
         cutWidthMm: activeFormat.widthMm,
         cutHeightMm: activeFormat.heightMm,
+        finalCutSize: finalCutSize.trim() || undefined,
         blocksQty: Math.max(0, blocksQty),
         sheetsPerBlock: Math.max(0, sheetsPerBlock),
         ways: Math.max(0, ways),
@@ -448,6 +456,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
         cutFormatName: activeFormat.name,
         cutWidthMm: activeFormat.widthMm,
         cutHeightMm: activeFormat.heightMm,
+        finalCutSize: finalCutSize.trim() || undefined,
         blocksQty: Math.max(0, blocksQty),
         sheetsPerBlock: Math.max(0, sheetsPerBlock),
         ways: Math.max(0, ways),
@@ -915,7 +924,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                           )}
                         </div>
                         <p className="text-xs text-indigo-900 font-medium mt-1">
-                          Parâmetros autocompletados da última alteração: <strong>Papel:</strong> {learningInfo.paperName} &bull; <strong>Formato:</strong> {learningInfo.cutFormatName} &bull; <strong>Quantidade:</strong> {learningInfo.blocksQty} &bull; <strong>Sobra:</strong> {learningInfo.breakMargin} un.
+                          Parâmetros autocompletados da última alteração: <strong>Papel:</strong> {learningInfo.paperName} &bull; <strong>Corte p/ Impressão:</strong> {learningInfo.cutFormatName} &bull; <strong>Corte Final:</strong> {learningInfo.finalCutSize || 'Conforme especificação'} &bull; <strong>Quantidade:</strong> {learningInfo.blocksQty} &bull; <strong>Sobra:</strong> {learningInfo.breakMargin} un.
                         </p>
                       </div>
                     </div>
@@ -924,10 +933,11 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                         type="button"
                         onClick={() => {
                           const clean = normalizeCode(serviceCodeInput);
-                          const aprendizado = obterParametrosAprendizadoContinuo(clean, orders, papers, formats);
-                          if (aprendizado && aprendizado.order) {
+                          const aprendizado = obterParametrosAprendizadoContinuo(clean, orders, papers, PRINT_CUT_FORMATS);
+                          if (aprendizado) {
                             setSelectedPaperId(aprendizado.paperId);
                             setSelectedFormatId(aprendizado.cutFormatId);
+                            if (aprendizado.finalCutSize) setFinalCutSize(aprendizado.finalCutSize);
                             setBlocksQty(aprendizado.blocksQty);
                             setSheetsPerBlock(aprendizado.sheetsPerBlock);
                             setWays(aprendizado.ways);
@@ -991,10 +1001,10 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                   </select>
                 </div>
 
-                {/* Seleção do Formato de Corte ABNT */}
+                {/* 1. Seleção do Corte para Impressão (Motor do Cálculo Gráfico Obrigatório) */}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Formato de Corte Final (ABNT): <span className="text-red-500">*</span>
+                    Corte para Impressão: <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={selectedFormatId}
@@ -1007,13 +1017,41 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                     }`}
                   >
                     <option value="">Selecione o Formato de Corte...</option>
-                    {formats.map((f) => (
+                    {PRINT_CUT_FORMATS.map((f) => (
                       <option key={f.id} value={f.id}>
                         {f.name} ({f.widthMm}x{f.heightMm}mm)
                       </option>
                     ))}
                   </select>
+                  <span className="text-[10px] text-slate-500 block mt-0.5 font-medium">
+                    Formato de corte da folha que entra na máquina impressora
+                  </span>
                 </div>
+              </div>
+
+              {/* 2. Campo Corte Final (Produto Acabado / Refile do Trabalho) - Logo abaixo */}
+              <div className="mt-3 bg-slate-50/70 border border-slate-200 rounded-xl p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <label htmlFor="final-cut-size-input" className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <span>Corte Final (Tamanho do Trabalho):</span>
+                  </label>
+                  {finalCutSize && (
+                    <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
+                      Refile Acabado: {finalCutSize}
+                    </span>
+                  )}
+                </div>
+                <input
+                  id="final-cut-size-input"
+                  type="text"
+                  value={finalCutSize}
+                  onChange={(e) => setFinalCutSize(e.target.value)}
+                  placeholder="Ex: 105x74 mm"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 placeholder:font-normal placeholder:text-slate-400 shadow-2xs"
+                />
+                <span className="text-[10px] text-slate-500 block mt-1 font-medium">
+                  Especificação livre do refile final após a impressão (Ex: 105x74 mm, 210x148 mm). Autopreenchido pelo histórico do código e 100% editável para alteração.
+                </span>
               </div>
 
               {/* Quantidades de Entrada & Imagens por Chapa */}
@@ -1356,8 +1394,15 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                     </td>
                     <td className="py-2.5 px-3">
                       <div className="line-clamp-1">{order.paperName}</div>
-                      <div className="text-[10px] text-slate-400">
-                        {order.cutFormatName} ({order.yieldPerSheet} poses)
+                      <div className="text-[10px] text-slate-500 flex flex-wrap items-center gap-1.5 mt-0.5">
+                        <span className="font-semibold text-blue-900 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">
+                          {order.cutFormatName} ({order.yieldPerSheet}p)
+                        </span>
+                        {order.finalCutSize && (
+                          <span className="font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                            Refile: {order.finalCutSize}
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="py-2.5 px-3 text-center font-mono font-semibold text-slate-600">

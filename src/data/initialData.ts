@@ -13,14 +13,9 @@ export const INITIAL_MACHINES: Machine[] = [
   { id: 'Sakurai', name: 'Sakurai', tech: 'Offset Plana' },
 ];
 
-// Formatos de Corte Finais (Tabela ABNT & SISMAT)
-export const INITIAL_FORMATS: CutFormat[] = [
+// Formatos de Corte para Impressão (Motor do Cálculo Gráfico - 12 Formatos Cadastrados Oficiais)
+export const PRINT_CUT_FORMATS: CutFormat[] = [
   { id: 'fmt-a4', name: 'A4', widthMm: 210, heightMm: 297, description: '210×297 mm' },
-  { id: 'fmt-a5', name: 'A5', widthMm: 210, heightMm: 148, description: '210×148 mm (Meio A4)' },
-  { id: 'fmt-1-3-a4', name: '1/3 A4', widthMm: 210, heightMm: 105, description: '210×105 mm' },
-  { id: 'fmt-a6', name: 'A6', widthMm: 105, heightMm: 148, description: '105×148 mm (1/4 A4)' },
-  { id: 'fmt-120-70', name: '120×70 mm', widthMm: 120, heightMm: 70, description: '120×70 mm (Ficha Reduzida)' },
-  { id: 'fmt-a7', name: 'A7', widthMm: 105, heightMm: 74, description: '105×74 mm' },
   { id: 'fmt-sra4', name: 'SRA4', widthMm: 240, heightMm: 320, description: '240×320 mm' },
   { id: 'fmt-a3', name: 'A3', widthMm: 297, heightMm: 420, description: '297×420 mm' },
   { id: 'fmt-sra3', name: 'SRA3', widthMm: 328, heightMm: 480, description: '328×480 mm' },
@@ -32,12 +27,9 @@ export const INITIAL_FORMATS: CutFormat[] = [
   { id: 'fmt-pacote', name: 'Pacote', widthMm: 470, heightMm: 640, description: '470×640 mm' },
   { id: 'fmt-revista', name: 'Revista', widthMm: 328, heightMm: 460, description: '328×460 mm' },
   { id: 'fmt-ficha', name: 'Ficha', widthMm: 225, heightMm: 310, description: '225×310 mm' },
-  { id: 'fmt-320-460', name: '320×460 mm', widthMm: 320, heightMm: 460, description: '320×460 mm' },
-  { id: 'fmt-123-202', name: '123×202 mm', widthMm: 123, heightMm: 202, description: '123×202 mm' },
-  { id: 'fmt-230-148', name: '230×148 mm', widthMm: 230, heightMm: 148, description: '230×148 mm' },
-  { id: 'fmt-179-230', name: '179×230 mm', widthMm: 179, heightMm: 230, description: '179×230 mm' },
-  { id: 'fmt-90-151', name: '90×151 mm', widthMm: 90, heightMm: 151, description: '90×151 mm' },
 ];
+
+export const INITIAL_FORMATS: CutFormat[] = PRINT_CUT_FORMATS;
 
 // Tipos de Papéis e Formatos (Dados de Estoque)
 export const INITIAL_PAPERS: PaperFactory[] = [
@@ -578,6 +570,7 @@ export function createInitialOrders(): ServiceOrder[] {
       cutFormatName: fmtSimples.name,
       cutWidthMm: fmtSimples.widthMm,
       cutHeightMm: fmtSimples.heightMm,
+      finalCutSize: '210x148 mm',
       blocksQty: 25,
       sheetsPerBlock: 50,
       ways: 2,
@@ -617,6 +610,7 @@ export function createInitialOrders(): ServiceOrder[] {
       cutFormatName: fmtA4.name,
       cutWidthMm: fmtA4.widthMm,
       cutHeightMm: fmtA4.heightMm,
+      finalCutSize: '210x148 mm',
       blocksQty: 40,
       sheetsPerBlock: 100,
       ways: 1,
@@ -656,6 +650,7 @@ export function createInitialOrders(): ServiceOrder[] {
       cutFormatName: fmtA4.name,
       cutWidthMm: fmtA4.widthMm,
       cutHeightMm: fmtA4.heightMm,
+      finalCutSize: '210x297 mm',
       blocksQty: 10,
       sheetsPerBlock: 100,
       ways: 3,
@@ -695,6 +690,7 @@ export function createInitialOrders(): ServiceOrder[] {
       cutFormatName: fmtDuploOficio.name,
       cutWidthMm: fmtDuploOficio.widthMm,
       cutHeightMm: fmtDuploOficio.heightMm,
+      finalCutSize: '310x430 mm',
       blocksQty: 15,
       sheetsPerBlock: 50,
       ways: 1,
@@ -734,6 +730,7 @@ export function createInitialOrders(): ServiceOrder[] {
       cutFormatName: fmtA4.name,
       cutWidthMm: fmtA4.widthMm,
       cutHeightMm: fmtA4.heightMm,
+      finalCutSize: '105x74 mm',
       blocksQty: 20,
       sheetsPerBlock: 100,
       ways: 1,

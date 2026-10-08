@@ -22,11 +22,9 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
     order.cutHeightMm
   );
 
-  // Dynamic cutting nomenclature: "CORTE [NOME] (FORMATO X)"
-  const rawFormat = (order.cutFormatName || 'PADRÃO').trim().toUpperCase();
-  const cuttingTitle = rawFormat.startsWith('CORTE ')
-    ? `${rawFormat} (FORMATO ${order.yieldPerSheet})`
-    : `CORTE ${rawFormat} (FORMATO ${order.yieldPerSheet})`;
+  // Dynamic cutting nomenclature: "CORTE PARA IMPRESSÃO: [NOME] (FORMATO X)"
+  const rawFormat = (order.cutFormatName || 'PADRÃO').trim().toUpperCase().replace(/^CORTE\s+(?:PARA\s+IMPRESSÃO:\s*)?/i, '');
+  const cuttingTitle = `CORTE PARA IMPRESSÃO: ${rawFormat} (FORMATO ${order.yieldPerSheet})`;
 
   // Clean O.S. number without '#'
   const cleanOrderNumber = (order.orderNumber || '').replace(/^#/, '');
@@ -65,12 +63,12 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
   const productionSectors = [
     { id: 1, name: '1. ARTE FINAL', desc: 'Prova & Gravação CTP' },
     { id: 2, name: '2. GRAVAÇÃO DE CHAPAS', desc: 'Matrizes Térmicas' },
-    { id: 3, name: '3. CORTE (PREPARAÇÃO)', desc: 'Guilhotina / Formato Bruto' },
+    { id: 3, name: '3. CORTE (PREPARAÇÃO)', desc: `Guilhotina / Corte para Impressão ${order.cutFormatName || ''}` },
     { id: 4, name: '4. IMPRESSÃO', desc: order.machine || 'Offset / Digital' },
     { id: 5, name: '5. ACABAMENTO', desc: 'Intercalação / Blocagem' },
     { id: 6, name: '6. VINCO / DOBRA', desc: 'Vincadeira / Dobradeira' },
     { id: 7, name: '7. GRAMPO / BROCHURA', desc: 'Grampeação / Encadernação' },
-    { id: 8, name: '8. CORTE FINAL (REFILE)', desc: `Refile no Formato ${order.cutFormatName || ''}` },
+    { id: 8, name: '8. CORTE FINAL (REFILE)', desc: order.finalCutSize ? `Refile no Tamanho Final: ${order.finalCutSize}` : `Refile no Formato do Trabalho` },
     { id: 9, name: '9. EMPACOTAMENTO', desc: 'Expedição & Entrega' },
   ];
 
@@ -202,14 +200,24 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                 </h2>
               </div>
 
-              {/* Right: CÓDIGO DO MATERIAL - Destaque Limpo com Borda Fina Preta */}
-              <div className="bg-slate-50 text-black px-3 py-1 rounded-xs border-black border-[1px] text-center shrink-0 min-w-[130px]">
-                <span className="block text-[7px] uppercase tracking-widest text-black font-bold leading-none">
-                  CÓDIGO DO MATERIAL
-                </span>
-                <span className="text-xl font-black font-mono tracking-wider text-black block mt-0.5 leading-none">
-                  {order.serviceCode}
-                </span>
+              {/* Right: CORTE FINAL (PRODUTO ACABADO) + CÓDIGO DO MATERIAL */}
+              <div className="flex items-center gap-2">
+                <div className="bg-slate-50 text-black px-2.5 py-1 rounded-xs border-black border-[1px] text-center shrink-0 min-w-[115px]">
+                  <span className="block text-[7px] uppercase tracking-widest text-black font-bold leading-none">
+                    CORTE FINAL (REFILE)
+                  </span>
+                  <span className="text-xs font-black font-mono tracking-tight text-black block mt-0.5 leading-none">
+                    {order.finalCutSize || 'CONFORME MODELO'}
+                  </span>
+                </div>
+                <div className="bg-slate-50 text-black px-3 py-1 rounded-xs border-black border-[1px] text-center shrink-0 min-w-[125px]">
+                  <span className="block text-[7px] uppercase tracking-widest text-black font-bold leading-none">
+                    CÓDIGO DO MATERIAL
+                  </span>
+                  <span className="text-xl font-black font-mono tracking-wider text-black block mt-0.5 leading-none">
+                    {order.serviceCode}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -253,7 +261,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                   </td>
                   <td className="p-1 w-1/4 text-center">
                     <span className="block text-[7.5px] uppercase font-bold text-black mb-0.5 leading-none">
-                      FORMATO FINAL DE CORTE
+                      CORTE PARA IMPRESSÃO
                     </span>
                     <strong className="text-xs font-black font-mono text-black block text-center leading-tight">
                       {order.cutFormatName}
@@ -358,14 +366,14 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <Scissors className="w-3.5 h-3.5 text-black shrink-0" />
                   <span className="text-[9px] font-black uppercase text-black tracking-wider leading-none">
-                    Guia de Programação da Guilhotina
+                    Guia de Programação da Guilhotina (Corte para Impressão)
                   </span>
                 </div>
                 <div className="text-lg font-bold text-black tracking-tight leading-tight">
                   {cuttingTitle}
                 </div>
                 <p className="text-[8.5px] text-black italic leading-snug mt-1">
-                  {order.cutsDescription} &bull; Linhas pontilhadas indicam o plano de divisão da lâmina da guilhotina.
+                  {order.cutsDescription} &bull; Linhas pontilhadas indicam o plano de divisão da lâmina da guilhotina para a entrada na impressora.
                 </p>
               </div>
 
@@ -450,14 +458,14 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                   </text>
                 </svg>
                 <div className="text-[7.5px] font-bold font-mono text-black tracking-wider uppercase mt-0.5 leading-none">
-                  Corte: {order.cutWidthMm}×{order.cutHeightMm} mm
+                  Corte p/ Impressão: {order.cutWidthMm}×{order.cutHeightMm} mm
                 </div>
               </div>
             </div>
 
             {/* Linha de Comando Direto Unificada Compacta (mt-1, p-1.5) */}
             <div className="text-xs sm:text-sm font-black uppercase text-black tracking-wide bg-slate-50 p-1.5 border border-slate-300 rounded mt-1 block w-full text-center leading-tight">
-              ✂️ CORTADOR: CORTAR EXATAMENTE {totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS INTEIRAS {(order.paperName || 'PAPEL').toUpperCase()} NO FORMATO {(order.cutFormatName || '').replace(/^CORTE\s+/i, '').trim().toUpperCase()} (FORMATO {order.yieldPerSheet})
+              ✂️ CORTADOR: CORTAR EXATAMENTE {totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS INTEIRAS {(order.paperName || 'PAPEL').toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO {rawFormat} (FORMATO {order.yieldPerSheet})
             </div>
           </div>
 

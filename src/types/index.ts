@@ -100,11 +100,14 @@ export interface ServiceOrder {
   paperHeightMm: number;
   packageSheets: number;
 
-  // Formato de Corte (Tabela ABNT)
+  // Formato de Corte (Corte para Impressão - Motor de Cálculo Gráfico)
   cutFormatId: string;
   cutFormatName: string;
   cutWidthMm: number;
   cutHeightMm: number;
+
+  // Corte Final (Tamanho do Trabalho / Refile Produto Acabado, ex: "105x74 mm")
+  finalCutSize?: string;
 
   // Entradas de Produção
   blocksQty: number; // Quantidade de Blocos/Pacotes

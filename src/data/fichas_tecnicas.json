@@ -1,4 +1,228 @@
 {
+  "275": {
+    "codigo": "275",
+    "descricao": "Requerimento de Licença Especial.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "294": {
+    "codigo": "294",
+    "descricao": "Requisição de Serviço",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "298": {
+    "codigo": "298",
+    "descricao": "Sol. Serv. Mecan.",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "305": {
+    "codigo": "305",
+    "descricao": "Correspondência Postada",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "332": {
+    "codigo": "332",
+    "descricao": "Papel Informação c/ Pauta",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "343": {
+    "codigo": "343",
+    "descricao": "Guia de Postagem",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "363": {
+    "codigo": "363",
+    "descricao": "Certidão Execuções",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "365": {
+    "codigo": "365",
+    "descricao": "Registro Dependência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "367": {
+    "codigo": "367",
+    "descricao": "Folha de Arquivo",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "377": {
+    "codigo": "377",
+    "descricao": "Carta de Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "378": {
+    "codigo": "378",
+    "descricao": "Boletim de Informação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "393": {
+    "codigo": "393",
+    "descricao": "Supensão de pena",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "397": {
+    "codigo": "397",
+    "descricao": "Guia de Remessa VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "401": {
+    "codigo": "401",
+    "descricao": "Guia de Remessa VEP",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "418": {
+    "codigo": "418",
+    "descricao": "Memorando Notificação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "505": {
+    "codigo": "505",
+    "descricao": "Carta Precatória - Citação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "517": {
+    "codigo": "517",
+    "descricao": "Alvará Soltura",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "518": {
+    "codigo": "518",
+    "descricao": "Carta Precatória",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "523": {
+    "codigo": "523",
+    "descricao": "Fix. Alimentos c/ Gratuidade BL",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "524": {
+    "codigo": "524",
+    "descricao": "Of. Comunicação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "545": {
+    "codigo": "545",
+    "descricao": "Carta de Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "674": {
+    "codigo": "674",
+    "descricao": "Papel Estatísticas Julgamentos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "676": {
+    "codigo": "676",
+    "descricao": "Oficio Informação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "889": {
+    "codigo": "889",
+    "descricao": "Movimento Diário",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "942": {
+    "codigo": "942",
+    "descricao": "Rel. de Ver. Pericial",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "943": {
+    "codigo": "943",
+    "descricao": "Boletim Atest. Médico",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "944": {
+    "codigo": "944",
+    "descricao": "Atestado Saúde Ocupacional",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
+  "982": {
+    "codigo": "982",
+    "descricao": "Recibo de Aluguel",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "",
+    "ano": ""
+  },
   "651-0719": {
     "codigo": "651-0719",
     "descricao": "LIVRO REGISTRO - MANDADO DE AVALIAÇÃO",
@@ -7333,14 +7557,6 @@
     "categoria": "",
     "ano": ""
   },
-  "275": {
-    "codigo": "275",
-    "descricao": "Requerimento de Licença Especial.",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0277": {
     "codigo": "651-0277",
     "descricao": "Solicitaçao de Material",
@@ -7357,41 +7573,9 @@
     "categoria": "",
     "ano": ""
   },
-  "294": {
-    "codigo": "294",
-    "descricao": "Requisição de Serviço",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "298": {
-    "codigo": "298",
-    "descricao": "Sol. Serv. Mecan.",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "305": {
-    "codigo": "305",
-    "descricao": "Correspondência Postada",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0327": {
     "codigo": "651-0327",
     "descricao": "Comp. Entrega de Selo",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "332": {
-    "codigo": "332",
-    "descricao": "Papel Informação c/ Pauta",
     "papel": "",
     "formatoCorte": "",
     "categoria": "",
@@ -7405,57 +7589,9 @@
     "categoria": "",
     "ano": ""
   },
-  "343": {
-    "codigo": "343",
-    "descricao": "Guia de Postagem",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "363": {
-    "codigo": "363",
-    "descricao": "Certidão Execuções",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0364": {
     "codigo": "651-0364",
     "descricao": "Bloco de Arquivo",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "365": {
-    "codigo": "365",
-    "descricao": "Registro Dependência",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "367": {
-    "codigo": "367",
-    "descricao": "Folha de Arquivo",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "377": {
-    "codigo": "377",
-    "descricao": "Carta de Sentença",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "378": {
-    "codigo": "378",
-    "descricao": "Boletim de Informação",
     "papel": "",
     "formatoCorte": "",
     "categoria": "",
@@ -7477,41 +7613,9 @@
     "categoria": "",
     "ano": ""
   },
-  "393": {
-    "codigo": "393",
-    "descricao": "Supensão de pena",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "397": {
-    "codigo": "397",
-    "descricao": "Guia de Remessa VEP",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0398": {
     "codigo": "651-0398",
     "descricao": "Requisição de xerox",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "401": {
-    "codigo": "401",
-    "descricao": "Guia de Remessa VEP",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "418": {
-    "codigo": "418",
-    "descricao": "Memorando Notificação",
     "papel": "",
     "formatoCorte": "",
     "categoria": "",
@@ -7541,57 +7645,9 @@
     "categoria": "",
     "ano": ""
   },
-  "505": {
-    "codigo": "505",
-    "descricao": "Carta Precatória - Citação",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "517": {
-    "codigo": "517",
-    "descricao": "Alvará Soltura",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "518": {
-    "codigo": "518",
-    "descricao": "Carta Precatória",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "523": {
-    "codigo": "523",
-    "descricao": "Fix. Alimentos c/ Gratuidade BL",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "524": {
-    "codigo": "524",
-    "descricao": "Of. Comunicação",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0530": {
     "codigo": "651-0530",
     "descricao": "Termo Inventariante",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "545": {
-    "codigo": "545",
-    "descricao": "Carta de Sentença",
     "papel": "",
     "formatoCorte": "",
     "categoria": "",
@@ -7613,33 +7669,9 @@
     "categoria": "",
     "ano": ""
   },
-  "674": {
-    "codigo": "674",
-    "descricao": "Papel Estatísticas Julgamentos",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0675": {
     "codigo": "651-0675",
     "descricao": "Formulário Recebimento",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "676": {
-    "codigo": "676",
-    "descricao": "Oficio Informação",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "889": {
-    "codigo": "889",
-    "descricao": "Movimento Diário",
     "papel": "",
     "formatoCorte": "",
     "categoria": "",
@@ -7653,40 +7685,8 @@
     "categoria": "",
     "ano": ""
   },
-  "942": {
-    "codigo": "942",
-    "descricao": "Rel. de Ver. Pericial",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "943": {
-    "codigo": "943",
-    "descricao": "Boletim Atest. Médico",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "944": {
-    "codigo": "944",
-    "descricao": "Atestado Saúde Ocupacional",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
   "651-0972": {
     "codigo": "651-0972",
-    "descricao": "Recibo de Aluguel",
-    "papel": "",
-    "formatoCorte": "",
-    "categoria": "",
-    "ano": ""
-  },
-  "982": {
-    "codigo": "982",
     "descricao": "Recibo de Aluguel",
     "papel": "",
     "formatoCorte": "",
@@ -10219,6 +10219,358 @@
     "papel": "",
     "formatoCorte": "",
     "categoria": "",
+    "ano": ""
+  },
+  "651-1002": {
+    "codigo": "651-1002",
+    "descricao": "Pedido de Material",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1006": {
+    "codigo": "651-1006",
+    "descricao": "Alvará de Autorizações",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1125": {
+    "codigo": "651-1125",
+    "descricao": "Comunicação Estatística",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1130": {
+    "codigo": "651-1130",
+    "descricao": "Certidão de Obito 2ª Via",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1131": {
+    "codigo": "651-1131",
+    "descricao": "Certidão de Casamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1136": {
+    "codigo": "651-1136",
+    "descricao": "Edital de Casamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1137": {
+    "codigo": "651-1137",
+    "descricao": "Pedido Certidão",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1140": {
+    "codigo": "651-1140",
+    "descricao": "Certidão Publicação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1141": {
+    "codigo": "651-1141",
+    "descricao": "Guia Sepultam. Natimorto",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1142": {
+    "codigo": "651-1142",
+    "descricao": "Papel Certidão",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1146": {
+    "codigo": "651-1146",
+    "descricao": "Guia Sepultam. Natimorto",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1229": {
+    "codigo": "651-1229",
+    "descricao": "Solicitação de Cópias Reproráficas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1238": {
+    "codigo": "651-1238",
+    "descricao": "Relação de Autos Conclusos",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1321": {
+    "codigo": "651-1321",
+    "descricao": "Of. Rel. Depósito",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1416": {
+    "codigo": "651-1416",
+    "descricao": "Conta Corrente",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1437": {
+    "codigo": "651-1437",
+    "descricao": "Intimação Pagamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1480": {
+    "codigo": "651-1480",
+    "descricao": "Termo de Conciliação",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1510": {
+    "codigo": "651-1510",
+    "descricao": "Adit. Mandado Diligência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1515": {
+    "codigo": "651-1515",
+    "descricao": "Oficio Audiência Sentença",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1516": {
+    "codigo": "651-1516",
+    "descricao": "Auto Execução de Penhora",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1518": {
+    "codigo": "651-1518",
+    "descricao": "Boletim Frequência - Duas Vias",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1520": {
+    "codigo": "651-1520",
+    "descricao": "Carta Abertura",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1558": {
+    "codigo": "651-1558",
+    "descricao": "Termo Afirmação de Ausência",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1559": {
+    "codigo": "651-1559",
+    "descricao": "Mandado Busca e Apreensão",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1561": {
+    "codigo": "651-1561",
+    "descricao": "Termo de Confissão",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1565": {
+    "codigo": "651-1565",
+    "descricao": "Termo de Compromisso",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1566": {
+    "codigo": "651-1566",
+    "descricao": "Termo Pagamento Quitação Credor",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1567": {
+    "codigo": "651-1567",
+    "descricao": "Termo de Pagamento Quitação Autor",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1708": {
+    "codigo": "651-1708",
+    "descricao": "Ata Julgamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1712": {
+    "codigo": "651-1712",
+    "descricao": "Calc. p/ Verificação de Débito",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1718": {
+    "codigo": "651-1718",
+    "descricao": "Quesitos para julgamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1848": {
+    "codigo": "651-1848",
+    "descricao": "Requisição de Serviços",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1854": {
+    "codigo": "651-1854",
+    "descricao": "Formulário Conta Custas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1876": {
+    "codigo": "651-1876",
+    "descricao": "Of. Comum. Arquivamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1880": {
+    "codigo": "651-1880",
+    "descricao": "E. Certidão de Nascimento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1905": {
+    "codigo": "651-1905",
+    "descricao": "Anotação de Serviço de Oficina",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1906": {
+    "codigo": "651-1906",
+    "descricao": "Autorização P/ Livro de Folhas Soltas",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1919": {
+    "codigo": "651-1919",
+    "descricao": "Certidão Afirmativa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1922": {
+    "codigo": "651-1922",
+    "descricao": "Formulário Transmição de Mensagem",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1923": {
+    "codigo": "651-1923",
+    "descricao": "Liquidação de Despesa",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1925": {
+    "codigo": "651-1925",
+    "descricao": "Solicitação de Desarquivamento",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1947": {
+    "codigo": "651-1947",
+    "descricao": "Solic. Sup. Informática",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1948": {
+    "codigo": "651-1948",
+    "descricao": "Solicitação de Instalação- Manutenção",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
+    "ano": ""
+  },
+  "651-1979": {
+    "codigo": "651-1979",
+    "descricao": "Papel Cópia",
+    "papel": "",
+    "formatoCorte": "",
+    "categoria": "FORMULÁRIOS GERAIS",
     "ano": ""
   }
 }

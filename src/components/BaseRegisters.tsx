@@ -312,7 +312,7 @@ export const BaseRegisters: React.FC = () => {
           }`}
         >
           <Scissors className="w-4 h-4" />
-          <span>Formatos de Corte ABNT ({formats.length})</span>
+          <span>Formatos de Corte para Impressão ({formats.length})</span>
         </button>
 
         <button
@@ -452,7 +452,7 @@ export const BaseRegisters: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-900">
-                Formatos de Corte Finais (Tabela ABNT)
+                Formatos de Corte para Impressão (Motor Gráfico)
               </h3>
               <p className="text-xs text-slate-500">
                 A4, SRA4, A3, SRA3, Carta, Duplo Ofício, Placa, Simples, Grafit Capa, Pacote, Revista, Ficha
