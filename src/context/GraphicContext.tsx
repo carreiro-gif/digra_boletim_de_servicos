@@ -95,6 +95,54 @@ const STORAGE_KEYS = {
 
 const SYNC_CHANNEL = 'pjerj_digra_sync_channel_v7';
 
+/**
+ * Normaliza o código do serviço para chave única (ignora traços, pontos, barras e espaços)
+ */
+function normalizeServiceCodeKey(code: string): string {
+  if (!code) return '';
+  return code.replace(/[^0-9a-zA-Z]/g, '').toLowerCase();
+}
+
+/**
+ * Mescla serviços garantindo que a base de INITIAL_SERVICES (os 1.449 materiais de fichas_tecnicas.json)
+ * seja SEMPRE preservada na íntegra.
+ * Começa sempre com INITIAL_SERVICES e aplica por cima os documentos do Firestore ou do cache,
+ * usando o código normalizado como chave.
+ * Quando o mesmo código existir nos dois, o do Firestore/override tem prioridade.
+ */
+export function mergeWithInitialServices(overrideServices?: ServiceCatalog[] | null): ServiceCatalog[] {
+  const map = new Map<string, ServiceCatalog>();
+
+  // 1. Sempre inicia com TODOS os materiais de INITIAL_SERVICES (1.449 materiais)
+  for (const s of INITIAL_SERVICES) {
+    const codeVal = s.code || (s as any).codigo || '';
+    const key = normalizeServiceCodeKey(codeVal);
+    if (key) {
+      map.set(key, s);
+    }
+  }
+
+  // 2. Aplica por cima os documentos do Firestore / cache (prioridade para o override)
+  if (Array.isArray(overrideServices)) {
+    for (const s of overrideServices) {
+      if (!s) continue;
+      const codeVal = s.code || (s as any).codigo || '';
+      const key = normalizeServiceCodeKey(codeVal);
+      if (key) {
+        const existing = map.get(key);
+        if (existing) {
+          // Quando o mesmo código existir nos dois, o do Firestore/override tem prioridade
+          map.set(key, { ...existing, ...s });
+        } else {
+          map.set(key, s);
+        }
+      }
+    }
+  }
+
+  return Array.from(map.values());
+}
+
 export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [responsibles, setResponsibles] = useState<Responsible[]>(() => {
     try {
@@ -135,7 +183,14 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [services, setServices] = useState<ServiceCatalog[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SERVICES);
-      return saved ? JSON.parse(saved) : INITIAL_SERVICES;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Garante que o cache do localStorage nunca reduza a lista abaixo de INITIAL_SERVICES (1.449 materiais)
+          return mergeWithInitialServices(parsed);
+        }
+      }
+      return INITIAL_SERVICES;
     } catch {
       return INITIAL_SERVICES;
     }
@@ -165,7 +220,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setSismatImportedCount(res.totalImported);
           if (res.totalImported > 0) {
             setOrders(res.orders);
-            setServices(res.services);
+            setServices(mergeWithInitialServices(res.services));
             setFormats(res.formats);
             setPapers(res.papers);
           }
@@ -262,7 +317,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         collection(db, 'services'),
         (snapshot) => {
           if (!snapshot.empty) {
-            setServices(snapshot.docs.map((d) => d.data() as ServiceCatalog));
+            const remoteServices = snapshot.docs.map((d) => d.data() as ServiceCatalog);
+            // MESCLAR: Inicia com INITIAL_SERVICES (os 1.449 materiais) e aplica por cima os documentos do Firestore
+            setServices(mergeWithInitialServices(remoteServices));
           }
         },
         handleListenerError('services')
@@ -313,7 +370,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setOrders(event.data.orders);
         setPapers(event.data.papers);
         setFormats(event.data.formats);
-        setServices(event.data.services);
+        setServices(mergeWithInitialServices(event.data.services));
         setResponsibles(event.data.responsibles);
         setMachines(event.data.machines);
       }
@@ -341,16 +398,17 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       const res = await carregarHistoricoSismat({ force: true });
       if (res.success) {
+        const mergedServices = mergeWithInitialServices(res.services);
         setSismatImportedCount(res.totalImported);
         setOrders(res.orders);
-        setServices(res.services);
+        setServices(mergedServices);
         setFormats(res.formats);
         setPapers(res.papers);
         broadcastUpdate('SYNC_ALL', {
           orders: res.orders,
           papers: res.papers,
           formats: res.formats,
-          services: res.services,
+          services: mergedServices,
           responsibles,
           machines,
         });
