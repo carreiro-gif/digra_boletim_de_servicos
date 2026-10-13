@@ -62,7 +62,7 @@ interface GraphicContextType {
       | 'totalFactorySheetsUsed'
       | 'packagesCount'
       | 'efficiencyPercent'
-    > & { orderNumber?: string }
+    > & { id?: string; orderNumber?: string }
   ) => Promise<ServiceOrder>;
   updateOrder: (id: string, data: Partial<ServiceOrder>) => Promise<ServiceOrder | undefined>;
   deleteOrder: (id: string) => Promise<void>;
@@ -154,6 +154,47 @@ export function mergeWithInitialServices(overrideServices?: ServiceCatalog[] | n
   }
 
   return Array.from(map.values());
+}
+
+/**
+ * Constrói o documento espelho para a coleção centralizada 'dashboard_metrics' no Firestore.
+ * Contém os dados consolidados de consumo físico de papel da O.S. usando o mesmo ID.
+ */
+export function buildDashboardMetricFromOrder(order: ServiceOrder) {
+  return {
+    id: order.id,
+    orderId: order.id,
+    orderNumber: order.orderNumber,
+    bsNumber: order.bsNumber || '',
+    materialCode: order.serviceCode || '',
+    serviceCode: order.serviceCode || '',
+    serviceName: order.serviceName || '',
+    serviceCategory: order.serviceCategory || '',
+    productionMonth: order.productionMonth || '',
+    dateEmission: order.dateEmission || order.productionMonth || '',
+    paperId: order.paperId || '',
+    paperCode: order.paperCode || '',
+    paperName: order.paperName || '',
+    packageSheets: order.packageSheets || 250,
+    cutFormatId: order.cutFormatId || '',
+    cutFormatName: order.cutFormatName || '',
+    liquidSheets: order.fullSheetsNeeded || 0,
+    fullSheetsNeeded: order.fullSheetsNeeded || 0,
+    surplusSheets: order.surplusSheets !== undefined ? order.surplusSheets : (order.breakMargin || 0),
+    surplusPercent: order.surplusPercent !== undefined ? order.surplusPercent : 10,
+    totalFactorySheetsUsed: order.totalFactorySheetsUsed || 0,
+    totalFinalSheets: order.totalFinalSheets || 0,
+    totalPrintedSheets: order.totalPrintedSheets || 0,
+    blocksQty: order.blocksQty || 0,
+    sheetsPerBlock: order.sheetsPerBlock || 100,
+    ways: order.ways || 1,
+    materialType: order.materialType || 'BLOCO',
+    status: order.status || 'Pronto',
+    machine: order.machine || '',
+    createdBy: order.createdBy || '',
+    updatedAt: order.updatedAt || Date.now(),
+    createdAt: order.createdAt || Date.now(),
+  };
 }
 
 export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -523,7 +564,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         | 'totalFactorySheetsUsed'
         | 'packagesCount'
         | 'efficiencyPercent'
-      > & { orderNumber?: string }
+      > & { id?: string; orderNumber?: string }
     ): Promise<ServiceOrder> => {
       const orderNumber = data.orderNumber || getNextOrderNumber();
       const math = calculateOrderMath({
@@ -549,7 +590,14 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
           : 0;
 
       const now = Date.now();
-      const id = `os-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+      // ID Oficial: "BS [Número] - [CódigoDoMaterial]" (Ex: "BS 17 - 654-5125")
+      const id =
+        (data.orderNumber && data.orderNumber.startsWith('BS '))
+          ? data.orderNumber
+          : (data.bsNumber && data.serviceCode
+            ? `BS ${data.bsNumber} - ${data.serviceCode}`
+            : data.id || `os-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`);
+
       const newOrder: ServiceOrder = {
         ...data,
         id,
@@ -574,8 +622,10 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (isFirebaseConfigured && db) {
         try {
           await setDoc(doc(db, 'orders', id), newOrder);
+          const metricDoc = buildDashboardMetricFromOrder(newOrder);
+          await setDoc(doc(db, 'dashboard_metrics', id), metricDoc);
         } catch (e: any) {
-          console.warn('[Firestore] Sincronização remota orders:', e?.message || e);
+          console.warn('[Firestore] Sincronização remota orders / dashboard_metrics:', e?.message || e);
         }
       }
 
@@ -638,8 +688,10 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (isFirebaseConfigured && db && resultOrder) {
         try {
           await setDoc(doc(db, 'orders', id), resultOrder);
+          const metricDoc = buildDashboardMetricFromOrder(resultOrder);
+          await setDoc(doc(db, 'dashboard_metrics', id), metricDoc);
         } catch (e: any) {
-          console.warn('[Firestore] Sincronização remota orders:', e?.message || e);
+          console.warn('[Firestore] Sincronização remota orders / dashboard_metrics:', e?.message || e);
         }
       }
 
@@ -659,8 +711,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (isFirebaseConfigured && db) {
         try {
           await deleteDoc(doc(db, 'orders', id));
+          await deleteDoc(doc(db, 'dashboard_metrics', id));
         } catch (e: any) {
-          console.warn('[Firestore] Exclusão remota orders:', e?.message || e);
+          console.warn('[Firestore] Exclusão remota orders / dashboard_metrics:', e?.message || e);
         }
       }
     },
@@ -676,6 +729,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
             if (isFirebaseConfigured && db) {
               setDoc(doc(db, 'orders', id), updatedOrder).catch((e) =>
                 console.warn('[Firestore] Sincronização remota orders:', e?.message || e)
+              );
+              setDoc(doc(db, 'dashboard_metrics', id), buildDashboardMetricFromOrder(updatedOrder)).catch((e) =>
+                console.warn('[Firestore] Sincronização remota dashboard_metrics:', e?.message || e)
               );
             }
             return updatedOrder;

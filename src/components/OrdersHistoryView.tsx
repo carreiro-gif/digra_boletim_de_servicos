@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useGraphic } from '../context/GraphicContext';
 import { ServiceOrder } from '../types';
+import { db, isFirebaseConfigured } from '../firebase';
+import { doc, deleteDoc } from 'firebase/firestore';
 import {
   FileText,
   Search,
@@ -104,6 +106,10 @@ export const OrdersHistoryView: React.FC<OrdersHistoryViewProps> = ({
     );
     if (!confirmed) return;
     try {
+      if (isFirebaseConfigured && db) {
+        await deleteDoc(doc(db, 'orders', order.id));
+        await deleteDoc(doc(db, 'dashboard_metrics', order.id));
+      }
       await deleteOrder(order.id);
     } catch (err) {
       console.error('Erro ao excluir O.S.:', err);
