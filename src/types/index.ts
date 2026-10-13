@@ -73,6 +73,14 @@ export interface CutCalculationResult {
   };
 }
 
+export type MaterialType =
+  | 'PACOTE'
+  | 'BLOCO'
+  | 'FICHA'
+  | 'ETIQUETA'
+  | 'CAPA'
+  | 'OUTROS';
+
 export interface ServiceOrder {
   id: string;
   orderNumber: string; // ex: "BS 17 - 654-5125" ou "#2026-0001"
@@ -110,18 +118,35 @@ export interface ServiceOrder {
   finalCutSize?: string;
 
   // Entradas de Produção
-  blocksQty: number; // Quantidade de Blocos/Pacotes
-  sheetsPerBlock: number; // Folhas por Bloco
+  blocksQty: number; // Quantidade de Blocos/Pacotes/Unidades
+  sheetsPerBlock: number; // Folhas por Bloco (compatibilidade legado)
   ways: number; // Vias
+  wayColors?: string[]; // Cores de cada via (Via 1 sempre Branca, demais customizadas)
   imagesPerPlate: number; // Imagens por Folha/Chapa (divisor)
-  breakMargin: number; // Margem de quebra manual (folhas inteiras)
+  breakMargin: number; // Margem de quebra / Sobra legado (folhas)
+
+  // Novos Campos de Produção & Matemática Gráfica
+  materialType?: MaterialType; // PACOTE, BLOCO, FICHA, ETIQUETA, CAPA, OUTROS
+  unitMultiplier?: number; // Folhas por bloco ou Unidades por pacote (ou 1)
+  surplusPercent?: number; // Porcentagem de Sobra (Acerto), padrão 10%
+  surplusSheets?: number; // Sobra calculada em folhas de impressão
+  totalPrintedSheets?: number; // Folhas líquidas + sobra
+  calcFormulaDescription?: string; // Memória de cálculo resumida
+  colorBreakdown?: {
+    color: string;
+    waysCount: number;
+    printedSheets: number;
+    liquidSheets: number;
+    surplusSheets: number;
+    totalColorSheets: number;
+  }[];
 
   // Cálculos Automáticos de Produção
-  totalFinalSheets: number; // (Blocos * Folhas por Bloco * Vias) / Imagens por Chapa
+  totalFinalSheets: number; // Folhas líquidas impressas
   yieldPerSheet: number; // Aproveitamento do papel
   cutsDescription: string;
   fullSheetsNeeded: number; // Math.ceil(totalFinalSheets / yieldPerSheet)
-  totalFactorySheetsUsed: number; // fullSheetsNeeded + breakMargin
+  totalFactorySheetsUsed: number; // fullSheetsNeeded + sobra de fábrica
   packagesCount: number; // totalFactorySheetsUsed / packageSheets
   efficiencyPercent: number;
 

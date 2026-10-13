@@ -1,4 +1,4 @@
-import { CutCalculationResult } from '../types';
+import { CutCalculationResult, MaterialType } from '../types';
 
 export const MONTHS_PT = [
   'Janeiro',
@@ -123,91 +123,292 @@ export function calculateCutYield(
 }
 
 /**
+ * Gera o texto explicativo da conta de produção em formato simples e direto:
+ * Ex: "20 BLOCOS × 100 FOLHAS = 2.000 UNIDADES ÷ 2 IMAGENS/CHAPA = 1.000 FOLHAS + 10% DE SOBRA = 1.100 FOLHAS"
+ */
+export function formatProductionFormula(params: {
+  blocksQty: number;
+  materialType?: MaterialType;
+  unitMultiplier?: number;
+  ways?: number;
+  imagesPerPlate?: number;
+  surplusPercent?: number;
+  rawUnits: number;
+  totalPieces: number;
+  printedSheetsLiquid: number;
+  sobraSheets: number;
+  totalPrintedSheets: number;
+}): string {
+  const {
+    blocksQty,
+    materialType = 'BLOCO',
+    unitMultiplier = 100,
+    ways = 1,
+    imagesPerPlate = 1,
+    surplusPercent = 10,
+    rawUnits,
+    totalPieces,
+    printedSheetsLiquid,
+    totalPrintedSheets,
+  } = params;
+
+  if (!blocksQty || blocksQty <= 0) return '';
+
+  let baseStr = '';
+  if (materialType === 'BLOCO') {
+    const plural = blocksQty === 1 ? 'BLOCO' : 'BLOCOS';
+    baseStr = `${blocksQty} ${plural} × ${unitMultiplier} FOLHAS = ${rawUnits.toLocaleString('pt-BR')} UNIDADES`;
+  } else if (materialType === 'PACOTE') {
+    const plural = blocksQty === 1 ? 'PACOTE' : 'PACOTES';
+    baseStr = `${blocksQty} ${plural} × ${unitMultiplier} UNIDADES = ${rawUnits.toLocaleString('pt-BR')} UNIDADES`;
+  } else if (materialType === 'FICHA') {
+    const plural = blocksQty === 1 ? 'FICHA' : 'FICHAS';
+    baseStr = `${blocksQty} ${plural} = ${rawUnits.toLocaleString('pt-BR')} UNIDADES`;
+  } else if (materialType === 'ETIQUETA') {
+    const plural = blocksQty === 1 ? 'ETIQUETA' : 'ETIQUETAS';
+    baseStr = `${blocksQty} ${plural} = ${rawUnits.toLocaleString('pt-BR')} UNIDADES`;
+  } else if (materialType === 'CAPA') {
+    const plural = blocksQty === 1 ? 'CAPA' : 'CAPAS';
+    baseStr = `${blocksQty} ${plural} = ${rawUnits.toLocaleString('pt-BR')} UNIDADES`;
+  } else {
+    const plural = blocksQty === 1 ? 'UNIDADE' : 'UNIDADES';
+    baseStr = `${blocksQty} ${plural} = ${rawUnits.toLocaleString('pt-BR')} UNIDADES`;
+  }
+
+  const waysStr = ways > 1 ? ` × ${ways} VIAS = ${totalPieces.toLocaleString('pt-BR')} PEÇAS` : '';
+  const imgStr = ` ÷ ${imagesPerPlate} IMAGENS/CHAPA = ${printedSheetsLiquid.toLocaleString('pt-BR')} FOLHAS`;
+  const sobraStr = ` + ${surplusPercent}% DE SOBRA = ${totalPrintedSheets.toLocaleString('pt-BR')} FOLHAS`;
+
+  return `${baseStr}${waysStr}${imgStr}${sobraStr}`;
+}
+
+/**
  * Calculates complete production values for a Service Order:
- * 1. Total de Peças Finais = blocksQty * (sheetsPerBlock || 1) * (ways || 1)
- * 2. Total de Folhas Impressas = Math.ceil(Total de Peças Finais / ImagensPorChapa)
- * 3. Folhas Inteiras de Fábrica = Math.ceil(Total de Folhas Impressas / AproveitamentoDoPapel)
- * 4. Gasto Total de Papel = Folhas Inteiras de Fábrica + Quebra (Fls)
- * 
- * Regra Inteligente para Trabalhos Avulsos (Capas, Fichas, Cartões, etc.):
- * - Se 'sheetsPerBlock' (Folhas / Bloco) for igual a 0 ou vazio, assume internamente o valor 1.
- * - Se 'ways' (Vias) for igual a 0 ou vazio, assume internamente o valor 1.
- * - O campo 'blocksQty' funciona como a QUANTIDADE TOTAL do pedido nesses casos.
- * - O campo 'imagesPerPlate' divide o total de peças antes do aproveitamento do papel.
+ * 1. Unidades Totais = Quantidade × (folhas por bloco, ou unidades por pacote, ou 1)
+ * 2. Total de Peças = Unidades Totais × Vias
+ * 3. Folhas Líquidas Necessárias (impressas) = Math.ceil(Total de Peças / ImagensPorChapa)
+ * 4. Sobra em Folhas = Math.ceil(Folhas Líquidas × Percentual ÷ 100)
+ * 5. Total de Folhas Impressas = Folhas Líquidas + Sobra em Folhas
+ * 6. Folhas Inteiras de Fábrica = Math.ceil(Folhas Líquidas / AproveitamentoDoPapel)
+ * 7. Sobra em Folhas de Fábrica = Math.ceil(Folhas Inteiras de Fábrica × Percentual ÷ 100)
+ * 8. Gasto Total de Papel de Fábrica = Folhas Inteiras + Sobra de Fábrica
  */
 export function calculateOrderMath(params: {
   blocksQty: number;
-  sheetsPerBlock: number;
-  ways: number;
-  imagesPerPlate: number; // Imagens por Chapa
-  breakMargin: number;
+  sheetsPerBlock?: number;
+  ways?: number;
+  wayColors?: string[]; // Cores das vias (Via 1 Branca, etc.)
+  imagesPerPlate?: number; // Imagens por Chapa
+  breakMargin?: number; // Sobra legada (em un/folhas)
   sheetW: number;
   sheetH: number;
   cutW: number;
   cutH: number;
+  materialType?: MaterialType;
+  unitMultiplier?: number;
+  surplusPercent?: number; // Sobra (Acerto) em porcentagem (padrão 10%)
 }) {
-  const blocks = Math.max(0, Number(params.blocksQty) || 0);
+  const blocks = params.blocksQty !== undefined && Number(params.blocksQty) > 0 ? Number(params.blocksQty) : 0;
 
-  // Se 'sheetsPerBlock' for 0, vazio ou undefined, assume internamente 1
-  const effectiveSheetsPerBlock =
-    params.sheetsPerBlock !== undefined && Number(params.sheetsPerBlock) > 0
-      ? Number(params.sheetsPerBlock)
-      : 1;
+  // Tipo de material: padrão 'OUTROS' (multiplicador 1) se não definido
+  const matType: MaterialType = params.materialType || 'OUTROS';
 
-  // Se 'ways' for 0, vazio ou undefined, assume internamente 1
+  let multiplier = 1;
+  if (matType === 'BLOCO') {
+    const val =
+      params.unitMultiplier !== undefined && Number(params.unitMultiplier) > 0
+        ? Number(params.unitMultiplier)
+        : (params.sheetsPerBlock !== undefined && Number(params.sheetsPerBlock) > 0 ? Number(params.sheetsPerBlock) : 100);
+    multiplier = val > 0 ? val : 1;
+  } else if (matType === 'PACOTE') {
+    const val =
+      params.unitMultiplier !== undefined && Number(params.unitMultiplier) > 0
+        ? Number(params.unitMultiplier)
+        : 100;
+    multiplier = val > 0 ? val : 1;
+  } else {
+    multiplier = 1;
+  }
+  if (isNaN(multiplier) || multiplier <= 0) {
+    multiplier = 1;
+  }
+
+  // Vias (mínimo 1, padrão 1 se vazio ou inválido)
   const effectiveWays =
     params.ways !== undefined && Number(params.ways) > 0
-      ? Number(params.ways)
+      ? Math.max(1, Math.floor(Number(params.ways)))
       : 1;
 
-  // Imagens por chapa (divisor obrigatório antes do aproveitamento, padrão 1)
-  const images =
-    params.imagesPerPlate !== undefined && Number(params.imagesPerPlate) > 0
-      ? Number(params.imagesPerPlate)
-      : 1;
+  // Imagens por chapa (obrigatória para emissão; padrão 0 se não preenchido)
+  const rawImages =
+    params.imagesPerPlate !== undefined ? Number(params.imagesPerPlate) : 0;
+  const images = rawImages > 0 ? rawImages : 0;
 
-  // Unidades de corte extras desejadas para acerto (ex: 50 capas de sobra)
-  const breakCutUnits = Math.max(0, Number(params.breakMargin) || 0);
+  // Aproveitamento do papel de fábrica (Cortes por Folha Inteira)
+  const sheetW = Number(params.sheetW) > 0 ? Number(params.sheetW) : 660;
+  const sheetH = Number(params.sheetH) > 0 ? Number(params.sheetH) : 960;
+  const cutW = Number(params.cutW) > 0 ? Number(params.cutW) : 660;
+  const cutH = Number(params.cutH) > 0 ? Number(params.cutH) : 960;
 
-  // 1. Total de Peças Finais = blocksQty * (sheetsPerBlock || 1) * (ways || 1)
-  const rawProductPieces = blocks * effectiveSheetsPerBlock * effectiveWays;
+  const cutResult = calculateCutYield(sheetW, sheetH, cutW, cutH);
+  const yieldPerSheet = cutResult.yield > 0 ? cutResult.yield : 1;
 
-  // 2. Total de Folhas Impressas = Math.ceil(Total de Peças Finais / ImagensPorChapa)
-  const totalFinalSheets =
-    rawProductPieces > 0 ? Math.ceil(rawProductPieces / images) : 0;
+  // Sobra (Acerto) % (padrão 10% se vazio ou não informado)
+  const surplusPercent =
+    params.surplusPercent !== undefined && !isNaN(Number(params.surplusPercent))
+      ? Math.max(0, Number(params.surplusPercent))
+      : 10;
 
-  // 3. Aproveitamento do papel de fábrica (Cortes por Folha Inteira)
-  const cutResult = calculateCutYield(params.sheetW, params.sheetH, params.cutW, params.cutH);
-  const yieldPerSheet = cutResult.yield;
+  // Se Quantidade ou Imagens/Chapa não foram preenchidos (<= 0), a matemática mostra 0
+  if (blocks <= 0 || images <= 0) {
+    return {
+      rawUnits: 0,
+      rawProductPieces: 0,
+      totalFinalSheets: 0,
+      yieldPerSheet,
+      cutsDescription: cutResult.description,
+      fullSheetsNeeded: 0,
+      sobraSheets: 0,
+      breakCutUnits: 0,
+      breakSheetsNeeded: 0,
+      totalFactorySheetsUsed: 0,
+      totalPrintedSheets: 0,
+      surplusPercent,
+      efficiencyPercent: cutResult.efficiencyPercent,
+      cutResult,
+      effectiveSheetsPerBlock: multiplier,
+      effectiveWays,
+      imagesPerPlate: images,
+      materialType: matType,
+      unitMultiplier: multiplier,
+      formulaDescription: '',
+      colorBreakdown: [] as {
+        color: string;
+        waysCount: number;
+        printedSheets: number;
+        liquidSheets: number;
+        surplusSheets: number;
+        totalColorSheets: number;
+      }[],
+    };
+  }
 
-  // 4. Folhas Inteiras de Fábrica Necessárias = Math.ceil(Total de Folhas Impressas / Aproveitamento do Papel)
-  const fullSheetsNeeded =
-    totalFinalSheets > 0 && yieldPerSheet > 0
-      ? Math.ceil(totalFinalSheets / yieldPerSheet)
-      : 0;
+  // 1. Unidades Totais = Quantidade × multiplicador do tipo (folhas por bloco, unidades por pacote, ou 1)
+  const rawUnits = blocks * multiplier;
 
-  // 5. Folhas de Quebra = Math.ceil(Quebra / Aproveitamento)
-  const breakSheetsNeeded =
-    breakCutUnits > 0 && yieldPerSheet > 0
-      ? Math.ceil(breakCutUnits / yieldPerSheet)
-      : 0;
+  // 2. Total de Peças Finais = Unidades Totais × Vias
+  const rawProductPieces = rawUnits * effectiveWays;
 
-  // 6. Gasto Total de Papel de Fábrica = Folhas Inteiras Necessárias + Folhas de Quebra
-  const totalFactorySheetsUsed = fullSheetsNeeded + breakSheetsNeeded;
+  // Cores das vias (Via 1 sempre 'Branca', demais conforme lista ou 'Branca')
+  const wayColorsList: string[] = [];
+  if (effectiveWays === 1) {
+    wayColorsList.push('Branca');
+  } else {
+    const rawList = params.wayColors && Array.isArray(params.wayColors) ? params.wayColors : [];
+    for (let i = 0; i < effectiveWays; i++) {
+      if (i === 0) {
+        wayColorsList.push('Branca');
+      } else {
+        const c = (rawList[i] || '').trim();
+        wayColorsList.push(c || 'Branca');
+      }
+    }
+  }
+
+  // Agrupamento por cor: some as vias que têm a mesma cor
+  const colorMap = new Map<string, number>();
+  for (const c of wayColorsList) {
+    const normalized = c.trim() || 'Branca';
+    colorMap.set(normalized, (colorMap.get(normalized) || 0) + 1);
+  }
+
+  const colorBreakdown: {
+    color: string;
+    waysCount: number;
+    printedSheets: number;
+    liquidSheets: number;
+    surplusSheets: number;
+    totalColorSheets: number;
+  }[] = [];
+
+  let sumPrintedSheets = 0;
+  let sumFullSheetsNeeded = 0;
+  let sumBreakSheetsNeeded = 0;
+  let sumTotalFactorySheets = 0;
+
+  // REGRAS POR COR:
+  // Para cada cor:
+  // - folhas impressas = Math.ceil((unidades totais * vias da cor) ÷ imagens por chapa)
+  // - folhas líquidas = Math.ceil(folhas impressas da cor ÷ poses)
+  // - sobra = Math.ceil(líquidas × percentual de sobra ÷ 100)
+  // - total da cor = líquidas + sobra
+  colorMap.forEach((count, color) => {
+    const printedColorSheets = Math.ceil((rawUnits * count) / images);
+    const liquidColorSheets = Math.ceil(printedColorSheets / yieldPerSheet);
+    const surplusColorSheets = Math.ceil((liquidColorSheets * surplusPercent) / 100);
+    const totalColorSheets = liquidColorSheets + surplusColorSheets;
+
+    colorBreakdown.push({
+      color,
+      waysCount: count,
+      printedSheets: printedColorSheets,
+      liquidSheets: liquidColorSheets,
+      surplusSheets: surplusColorSheets,
+      totalColorSheets,
+    });
+
+    sumPrintedSheets += printedColorSheets;
+    sumFullSheetsNeeded += liquidColorSheets;
+    sumBreakSheetsNeeded += surplusColorSheets;
+    sumTotalFactorySheets += totalColorSheets;
+  });
+
+  // Totais consolidados
+  const totalFinalSheets = sumPrintedSheets; // Total de folhas impressas líquidas da tiragem
+  const fullSheetsNeeded = sumFullSheetsNeeded; // Total de folhas inteiras líquidas de fábrica
+  const breakSheetsNeeded = sumBreakSheetsNeeded; // Total de sobra em folhas inteiras de fábrica
+  const totalFactorySheetsUsed = sumTotalFactorySheets; // Gasto Total de Papel (soma dos totais de todas as cores)
+
+  // Sobra de acerto calculada sobre as folhas impressas
+  const sobraSheets = Math.ceil((totalFinalSheets * surplusPercent) / 100);
+  const totalPrintedSheets = totalFinalSheets + sobraSheets;
+
+  // Memória de cálculo resumida
+  const formulaDescription = formatProductionFormula({
+    blocksQty: blocks,
+    materialType: matType,
+    unitMultiplier: multiplier,
+    ways: effectiveWays,
+    imagesPerPlate: images,
+    surplusPercent,
+    rawUnits,
+    totalPieces: rawProductPieces,
+    printedSheetsLiquid: totalFinalSheets,
+    sobraSheets: breakSheetsNeeded,
+    totalPrintedSheets: totalFactorySheetsUsed,
+  });
 
   return {
+    rawUnits,
     rawProductPieces,
-    totalFinalSheets,
-    yieldPerSheet,
+    totalFinalSheets, // 1. Total Folhas Finais Impressas Líquidas
+    yieldPerSheet, // 2. Aproveitamento (poses por folha)
     cutsDescription: cutResult.description,
-    fullSheetsNeeded,
-    breakCutUnits,
-    breakSheetsNeeded,
-    totalFactorySheetsUsed,
+    fullSheetsNeeded, // 3. Folhas Líquidas Necessárias (Fábrica)
+    sobraSheets, // Sobra em folhas de impressão
+    breakCutUnits: sobraSheets,
+    breakSheetsNeeded, // + Sobra (Acerto) em folhas inteiras de fábrica
+    totalFactorySheetsUsed, // Gasto Total de Papel de Fábrica (soma das cores)
+    totalPrintedSheets, // Folhas impressas com sobra
+    surplusPercent,
     efficiencyPercent: cutResult.efficiencyPercent,
     cutResult,
-    effectiveSheetsPerBlock,
+    effectiveSheetsPerBlock: multiplier,
     effectiveWays,
     imagesPerPlate: images,
+    materialType: matType,
+    unitMultiplier: multiplier,
+    formulaDescription,
+    colorBreakdown,
   };
 }

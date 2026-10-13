@@ -2,12 +2,14 @@ import React from 'react';
 
 export interface PjerjLogoProps {
   className?: string;
+  imageClassName?: string;
   size?: number;
   showText?: boolean;
 }
 
 export const PjerjLogo: React.FC<PjerjLogoProps> = ({
   className,
+  imageClassName,
   size,
   showText = true,
 }) => {
@@ -18,7 +20,7 @@ export const PjerjLogo: React.FC<PjerjLogoProps> = ({
         alt="Logo Oficial PJERJ" 
         width={size}
         height={size}
-        className="w-16 h-16 object-contain print:w-14 print:h-14" 
+        className={`w-16 h-16 object-contain print:w-14 print:h-14 ${imageClassName || ''}`} 
         onError={(e) => {
           // Fallback de segurança para garantir a renderização
           e.currentTarget.src = "./logo-pjerj.png";

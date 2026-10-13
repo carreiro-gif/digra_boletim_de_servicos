@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useGraphic } from '../context/GraphicContext';
-import { PlusCircle, LayoutDashboard, Columns3, FileText, Database, Cloud, Wifi, Sparkles, RefreshCw } from 'lucide-react';
+import { PlusCircle, LayoutDashboard, Columns3, FileText, Database, Cloud, Wifi, Sparkles, RefreshCw, History } from 'lucide-react';
 
-export type ActiveTab = 'emission' | 'kanban' | 'dashboard' | 'registers';
+export type ActiveTab = 'emission' | 'history' | 'kanban' | 'dashboard' | 'registers';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -94,6 +94,18 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenN
           >
             <FileText className="w-4 h-4 text-blue-300" />
             <span>Emissão de O.S.</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all shrink-0 ${
+              activeTab === 'history'
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-900/50'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <History className="w-4 h-4 text-sky-300" />
+            <span>Histórico de O.S.</span>
           </button>
 
           <button

@@ -136,7 +136,7 @@ export const DirectorDashboard: React.FC = () => {
       'Total O.S.',
       'Folhas Finais Produzidas',
       'Folhas Líquidas',
-      'Margem de Quebra (fls)',
+      'Sobra (Acerto) (fls)',
       'SOMA EXATA DE FOLHAS GASTAS',
       'PACOTES INTEIROS REPRESENTADOS',
     ];
@@ -366,7 +366,7 @@ export const DirectorDashboard: React.FC = () => {
                 <th className="py-3 px-3 text-center">Tamanho Pacote</th>
                 <th className="py-3 px-3 text-center">Nº O.S.</th>
                 <th className="py-3 px-3 text-right">Folhas Finais</th>
-                <th className="py-3 px-3 text-right">Quebra (Acerto)</th>
+                <th className="py-3 px-3 text-right">Sobra (Acerto)</th>
                 <th className="py-3 px-4 text-right bg-emerald-50 text-emerald-950 font-black">
                   SOMA EXATA DE FOLHAS GASTAS
                 </th>

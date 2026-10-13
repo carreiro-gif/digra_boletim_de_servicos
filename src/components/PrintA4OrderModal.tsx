@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ServiceOrder } from '../types';
-import { calculateCutYield } from '../utils/graphicMath';
+import { calculateCutYield, formatProductionFormula } from '../utils/graphicMath';
 import { Printer, X, Scissors } from 'lucide-react';
 
 interface PrintA4OrderModalProps {
@@ -44,6 +44,80 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
 
   // Total de folhas inteiras a cortar pelo guilhotineiro (com sobra incluída)
   const totalSheetsToCut = Math.ceil(order.totalFactorySheetsUsed || 0);
+
+  // Instruções para o cortador de acordo com Vias e Cores:
+  // Se Vias = 1: CORTADOR: CORTAR EXATAMENTE [X] FOLHAS INTEIRAS [PAPEL] NO FORMATO [CORTE] (FORMATO [Y])
+  // Se Vias > 1: Uma instrução por cor:
+  //   CORTADOR: CORTAR EXATAMENTE [X] FOLHAS INTEIRAS [PAPEL] COR [COR] NO FORMATO [CORTE] (FORMATO [Y])
+  const cutterInstructions = useMemo(() => {
+    const paperLabel = (order.paperName || 'PAPEL').toUpperCase();
+    const formatName = rawFormat;
+    const yieldNum = order.yieldPerSheet || 1;
+
+    // Se temos breakdown salvo na O.S.
+    if (order.colorBreakdown && order.colorBreakdown.length > 0 && order.ways && order.ways > 1) {
+      return order.colorBreakdown.map((item) => {
+        return `✂️ CORTADOR: CORTAR EXATAMENTE ${item.totalColorSheets.toLocaleString('pt-BR')} FOLHAS INTEIRAS ${paperLabel} COR ${item.color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`;
+      });
+    }
+
+    // Se a O.S. tem ways > 1 e wayColors salvas, recalcula se necessário
+    if (order.ways && order.ways > 1 && order.wayColors && order.wayColors.length > 0) {
+      const images = order.imagesPerPlate || 1;
+      const surplusPct = order.surplusPercent !== undefined ? order.surplusPercent : 10;
+      const unitMult = order.unitMultiplier || order.sheetsPerBlock || 100;
+      const rawUnits = (order.blocksQty || 0) * (order.materialType === 'BLOCO' || order.materialType === 'PACOTE' ? unitMult : 1);
+
+      const colorMap = new Map<string, number>();
+      order.wayColors.forEach((c, idx) => {
+        const colorName = idx === 0 ? 'Branca' : (c.trim() || 'Branca');
+        colorMap.set(colorName, (colorMap.get(colorName) || 0) + 1);
+      });
+
+      const list: string[] = [];
+      colorMap.forEach((count, color) => {
+        const printedColorSheets = Math.ceil((rawUnits * count) / images);
+        const liquidColorSheets = Math.ceil(printedColorSheets / yieldNum);
+        const surplusColorSheets = Math.ceil((liquidColorSheets * surplusPct) / 100);
+        const totalColorSheets = liquidColorSheets + surplusColorSheets;
+        list.push(`✂️ CORTADOR: CORTAR EXATAMENTE ${totalColorSheets.toLocaleString('pt-BR')} FOLHAS INTEIRAS ${paperLabel} COR ${color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`);
+      });
+      return list;
+    }
+
+    // Vias = 1 (ou legado sem cores): frase clássica sem cor
+    return [
+      `✂️ CORTADOR: CORTAR EXATAMENTE ${totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS INTEIRAS ${paperLabel} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`
+    ];
+  }, [order, rawFormat, totalSheetsToCut]);
+
+  // Memória de cálculo direta e simples da O.S. (Ex: 20 BLOCOS × 100 FOLHAS = 2.000 UNIDADES ÷ 2 IMAGENS/CHAPA = 1.000 FOLHAS + 10% DE SOBRA = 1.100 FOLHAS)
+  const formulaText = (() => {
+    if (order.calcFormulaDescription) return order.calcFormulaDescription;
+    const matType = order.materialType || (order.sheetsPerBlock && order.sheetsPerBlock > 1 ? 'BLOCO' : 'BLOCO');
+    const unitMult = order.unitMultiplier || order.sheetsPerBlock || 100;
+    const ways = order.ways || 1;
+    const images = order.imagesPerPlate || 1;
+    const surplusPct = order.surplusPercent !== undefined ? order.surplusPercent : 10;
+    const rawUnits = (order.blocksQty || 0) * (matType === 'BLOCO' || matType === 'PACOTE' ? unitMult : 1);
+    const totalPieces = rawUnits * ways;
+    const printedLiquid = order.totalFinalSheets || Math.ceil(totalPieces / images);
+    const sobra = order.surplusSheets !== undefined ? order.surplusSheets : Math.ceil((printedLiquid * surplusPct) / 100);
+    const totalPrinted = order.totalPrintedSheets !== undefined ? order.totalPrintedSheets : (printedLiquid + sobra);
+    return formatProductionFormula({
+      blocksQty: order.blocksQty || 0,
+      materialType: matType,
+      unitMultiplier: unitMult,
+      ways,
+      imagesPerPlate: images,
+      surplusPercent: surplusPct,
+      rawUnits,
+      totalPieces,
+      printedSheetsLiquid: printedLiquid,
+      sobraSheets: sobra,
+      totalPrintedSheets: totalPrinted,
+    });
+  })();
 
   // SVG Thumbnail Normalization - Compactado para liberar 3 a 4 cm verticais
   const svgBoxW = 140;
@@ -292,10 +366,18 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                   </td>
                   <td className="p-1 text-center">
                     <span className="block text-[7.5px] uppercase font-bold text-black leading-none">
-                      Folhas por Bloco
+                      {order.materialType === 'PACOTE'
+                        ? 'Unidades por Pacote'
+                        : order.materialType === 'BLOCO' || (!order.materialType && order.sheetsPerBlock > 1)
+                        ? 'Folhas por Bloco'
+                        : 'Tipo de Material'}
                     </span>
                     <strong className="text-xs font-black font-mono text-black mt-0.5 block">
-                      {order.sheetsPerBlock && order.sheetsPerBlock > 1 ? order.sheetsPerBlock : '-'}
+                      {order.materialType === 'PACOTE'
+                        ? `${order.unitMultiplier || 100} un`
+                        : order.materialType === 'BLOCO' || (!order.materialType && order.sheetsPerBlock > 1)
+                        ? `${order.sheetsPerBlock || order.unitMultiplier || 100} fls`
+                        : (order.materialType || '-')}
                     </strong>
                   </td>
                   <td className="p-1 text-center">
@@ -303,8 +385,13 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                       Vias
                     </span>
                     <strong className="text-xs font-black font-mono text-black mt-0.5 block">
-                      {order.ways && order.ways > 1 ? `${order.ways} via(s)` : '-'}
+                      {order.ways && order.ways > 1 ? `${order.ways} via(s)` : '1 via'}
                     </strong>
+                    {order.ways && order.ways > 1 && order.wayColors && order.wayColors.length > 0 && (
+                      <span className="block text-[6.5px] font-bold text-slate-800 leading-tight mt-0.5 truncate max-w-[130px] mx-auto" title={order.wayColors.join(' / ')}>
+                        {order.wayColors.map((c, i) => i === 0 ? 'Branca' : (c || 'Branca')).join(' / ')}
+                      </span>
+                    )}
                   </td>
                   <td className="p-1 text-center bg-slate-50">
                     <span className="block text-[7.5px] uppercase font-bold text-black leading-none">
@@ -339,7 +426,9 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                       SOBRA (ACERTO)
                     </span>
                     <strong className="text-xs font-black font-mono text-black mt-0.5 block">
-                      +{order.breakMargin || 0} un
+                      {order.surplusPercent !== undefined
+                        ? `+${order.surplusPercent}% (${order.surplusSheets !== undefined ? order.surplusSheets : Math.ceil((order.totalFinalSheets * order.surplusPercent) / 100)} fls)`
+                        : `+${order.breakMargin || 0} un`}
                     </strong>
                   </td>
                   <td className="p-1 text-center bg-slate-100">
@@ -356,6 +445,13 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                 </tr>
               </tbody>
             </table>
+
+            {/* Linha Simples da Conta da O.S. (Item 5: Ex: 20 BLOCOS × 100 FOLHAS = 2.000 UNIDADES ÷ 2 IMAGENS/CHAPA = 1.000 FOLHAS + 10% DE SOBRA = 1.100 FOLHAS) */}
+            {formulaText && (
+              <div className="border-black border-[1px] border-t-0 bg-slate-50 px-2 py-0.5 text-center font-mono font-bold text-black text-[8.5px] sm:text-[9px] tracking-tight leading-tight rounded-b-xs">
+                CÁLCULO: {formulaText}
+              </div>
+            )}
           </div>
 
           {/* ================= 5. GUIA DE PROGRAMAÇÃO DA GUILHOTINA COMPACTA ================= */}
@@ -463,9 +559,16 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
               </div>
             </div>
 
-            {/* Linha de Comando Direto Unificada Compacta (mt-1, p-1.5) */}
-            <div className="text-xs sm:text-sm font-black uppercase text-black tracking-wide bg-slate-50 p-1.5 border border-slate-300 rounded mt-1 block w-full text-center leading-tight">
-              ✂️ CORTADOR: CORTAR EXATAMENTE {totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS INTEIRAS {(order.paperName || 'PAPEL').toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO {rawFormat} (FORMATO {order.yieldPerSheet})
+            {/* Linha(s) de Comando Direto Unificada Compacta por cor ou única se vias=1 */}
+            <div className="space-y-1 mt-1">
+              {cutterInstructions.map((instruction, idx) => (
+                <div
+                  key={idx}
+                  className="text-xs sm:text-[13px] font-black uppercase text-black tracking-wide bg-slate-50 p-1.5 border border-slate-300 rounded block w-full text-center leading-tight"
+                >
+                  {instruction}
+                </div>
+              ))}
             </div>
           </div>
 

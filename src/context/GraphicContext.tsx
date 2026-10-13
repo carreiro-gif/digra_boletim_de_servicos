@@ -18,7 +18,17 @@ import {
 } from '../data/initialData.ts';
 import { calculateOrderMath } from '../utils/graphicMath';
 import { db, isFirebaseConfigured } from '../firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  doc,
+  setDoc,
+  deleteDoc,
+  getDocs,
+} from 'firebase/firestore';
 import { carregarHistoricoSismat } from '../utils/importadorSismat';
 
 interface GraphicContextType {
@@ -35,6 +45,9 @@ interface GraphicContextType {
   reimportarSismat: () => Promise<void>;
 
   // Order Actions
+  loadOlderOrdersFromFirestore: () => Promise<number>;
+  isFetchingOlderOrders: boolean;
+  hasLoadedAllOrders: boolean;
   addOrder: (
     data: Omit<
       ServiceOrder,
@@ -208,6 +221,45 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedOrderForPrint, setSelectedOrderForPrint] = useState<ServiceOrder | null>(null);
   const [sismatImportedCount, setSismatImportedCount] = useState<number>(0);
   const [isFirebaseActive, setIsFirebaseActive] = useState<boolean>(isFirebaseConfigured);
+  const [isFetchingOlderOrders, setIsFetchingOlderOrders] = useState<boolean>(false);
+  const [hasLoadedAllOrders, setHasLoadedAllOrders] = useState<boolean>(false);
+
+  // Busca ordens mais antigas no Firestore sob demanda (apenas quando solicitado na busca do histórico)
+  const loadOlderOrdersFromFirestore = useCallback(async (): Promise<number> => {
+    if (!isFirebaseConfigured || !db || isFetchingOlderOrders) return 0;
+    setIsFetchingOlderOrders(true);
+    try {
+      const snap = await getDocs(collection(db, 'orders'));
+      if (!snap.empty) {
+        const allRemoteOrders = snap.docs.map((d) => d.data() as ServiceOrder);
+        let addedCount = 0;
+        setOrders((prev) => {
+          const map = new Map<string, ServiceOrder>();
+          for (const ord of prev) {
+            if (ord.id) map.set(ord.id, ord);
+          }
+          for (const ord of allRemoteOrders) {
+            if (ord.id && !map.has(ord.id)) {
+              addedCount++;
+              map.set(ord.id, ord);
+            } else if (ord.id) {
+              map.set(ord.id, ord);
+            }
+          }
+          return Array.from(map.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        });
+        setHasLoadedAllOrders(true);
+        return addedCount;
+      }
+      setHasLoadedAllOrders(true);
+      return 0;
+    } catch (err) {
+      console.warn('[PJERJ DIGRA] Erro ao carregar histórico antigo do Firestore:', err);
+      return 0;
+    } finally {
+      setIsFetchingOlderOrders(false);
+    }
+  }, [isFetchingOlderOrders]);
 
   // Inicialização única do Histórico SISMAT (injeta no estado local e salva no Firestore)
   useEffect(() => {
@@ -281,12 +333,31 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     try {
-      unsubOrders = onSnapshot(
+      // Otimização de Leituras: Listener carrega apenas as O.S. mais recentes (últimas 500 por createdAt desc)
+      // evitando baixar milhares de documentos antigos em tempo real continuamente.
+      const qOrders = query(
         collection(db, 'orders'),
+        orderBy('createdAt', 'desc'),
+        limit(500)
+      );
+
+      unsubOrders = onSnapshot(
+        qOrders,
         (snapshot) => {
           if (!snapshot.empty) {
             const remoteOrders = snapshot.docs.map((d) => d.data() as ServiceOrder);
-            setOrders(remoteOrders);
+            setOrders((prev) => {
+              const map = new Map<string, ServiceOrder>();
+              // Preserva ordens mais antigas já carregadas sob demanda ou em cache
+              for (const ord of prev) {
+                if (ord.id) map.set(ord.id, ord);
+              }
+              // Atualiza com os documentos mais recentes do listener
+              for (const ord of remoteOrders) {
+                if (ord.id) map.set(ord.id, ord);
+              }
+              return Array.from(map.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            });
           }
           setIsFirebaseActive(true);
         },
@@ -821,6 +892,9 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isFirebaseActive,
         sismatImportedCount,
         reimportarSismat,
+        loadOlderOrdersFromFirestore,
+        isFetchingOlderOrders,
+        hasLoadedAllOrders,
         addOrder,
         updateOrder,
         deleteOrder,

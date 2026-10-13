@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { GraphicProvider, useGraphic } from './context/GraphicContext';
 import { Header, ActiveTab } from './components/Header';
 import { OrderEmissionView } from './components/OrderEmissionView';
+import { OrdersHistoryView } from './components/OrdersHistoryView';
 import { KanbanBoard } from './components/KanbanBoard';
 import { DirectorDashboard } from './components/DirectorDashboard';
 import { BaseRegisters } from './components/BaseRegisters';
@@ -16,6 +17,7 @@ import { ServiceOrder } from './types';
 
 const MainAppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('emission');
+  const [orderToEdit, setOrderToEdit] = useState<ServiceOrder | null>(null);
   const { selectedOrderForPrint, setSelectedOrderForPrint } = useGraphic();
 
   const handlePrintOrder = (order: ServiceOrder) => {
@@ -27,6 +29,13 @@ const MainAppContent: React.FC = () => {
   };
 
   const handleOpenNewOrder = () => {
+    setOrderToEdit(null);
+    setActiveTab('emission');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleEditOrder = (order: ServiceOrder) => {
+    setOrderToEdit(order);
     setActiveTab('emission');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -46,6 +55,16 @@ const MainAppContent: React.FC = () => {
           <OrderEmissionView
             onPrintOrder={handlePrintOrder}
             onNavigateKanban={() => setActiveTab('kanban')}
+            orderToEdit={orderToEdit}
+            onClearOrderToEdit={() => setOrderToEdit(null)}
+          />
+        )}
+
+        {activeTab === 'history' && (
+          <OrdersHistoryView
+            onPrintOrder={handlePrintOrder}
+            onEditOrder={handleEditOrder}
+            onOpenNewOrder={handleOpenNewOrder}
           />
         )}
 
@@ -71,7 +90,7 @@ const MainAppContent: React.FC = () => {
       <footer className="bg-[#0b1329] text-slate-400 border-t border-[#1e293b] py-6 px-4 text-xs print:hidden">
         <div className="w-full px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <PjerjLogo showText={false} size={36} className="shrink-0" />
+            <PjerjLogo showText={false} size={36} className="shrink-0" imageClassName="invert brightness-0" />
             <div>
               <div className="text-white font-black text-sm tracking-wide">
                 DIGRA - DIVISÃO GRÁFICA
