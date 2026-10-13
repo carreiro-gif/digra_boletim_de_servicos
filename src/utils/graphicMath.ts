@@ -1,4 +1,4 @@
-import { CutCalculationResult, MaterialType } from '../types';
+import { CutCalculationResult, MaterialType, PaperFactory } from '../types';
 
 export const MONTHS_PT = [
   'Janeiro',
@@ -210,8 +210,13 @@ export function calculateOrderMath(params: {
 }) {
   const blocks = params.blocksQty !== undefined && Number(params.blocksQty) > 0 ? Number(params.blocksQty) : 0;
 
-  // Tipo de material: padrão 'OUTROS' (multiplicador 1) se não definido
-  const matType: MaterialType = params.materialType || 'OUTROS';
+  // Tipo de material: padrão 'OUTROS' (multiplicador 1) se não definido,
+  // mas se sheetsPerBlock ou unitMultiplier > 1 for informado sem tipo explícito, infere BLOCO ou PACOTE
+  const matType: MaterialType =
+    params.materialType ||
+    (params.sheetsPerBlock && Number(params.sheetsPerBlock) > 1
+      ? 'BLOCO'
+      : (params.unitMultiplier && Number(params.unitMultiplier) > 1 ? 'PACOTE' : 'OUTROS'));
 
   let multiplier = 1;
   if (matType === 'BLOCO') {
@@ -412,3 +417,116 @@ export function calculateOrderMath(params: {
     colorBreakdown,
   };
 }
+
+/**
+ * Formata a conversão exata do consumo de papel em pacotes fechados e folhas restantes:
+ * Divisão inteira (Math.floor(total / pacote)) e resto (total % pacote).
+ * Exemplo: 165 folhas com pacote de 150 -> "1 pacote fechado + 15 folhas"
+ */
+export function formatPackageBreakdownText(totalSheets: number, sheetsPerPack: number): string {
+  const total = Math.max(0, Math.ceil(totalSheets || 0));
+  const packSize = Number(sheetsPerPack) > 0 ? Number(sheetsPerPack) : 250;
+
+  if (total === 0) return '0 folhas';
+
+  const fullPackages = Math.floor(total / packSize);
+  const remainder = total % packSize;
+
+  const packWord = fullPackages === 1 ? 'pacote fechado' : 'pacotes fechados';
+  const sheetWord = remainder === 1 ? 'folha' : 'folhas';
+
+  if (fullPackages === 0) {
+    return `0 pacotes fechados + ${remainder} ${sheetWord}`;
+  }
+
+  if (remainder === 0) {
+    return `${fullPackages} ${packWord}`;
+  }
+
+  return `${fullPackages} ${packWord} + ${remainder} ${sheetWord}`;
+}
+
+/**
+ * Formata o detalhamento de pacotes para a frase automática do cortador:
+ * Se houver pelo menos 1 pacote fechado (fullPackages >= 1), acrescenta:
+ * " ([X] PACOTE(S) FECHADO(S) + [Y] FOLHAS)"
+ */
+export function formatCutterPackageSpec(totalSheets: number, sheetsPerPack: number): string {
+  const total = Math.max(0, Math.ceil(totalSheets || 0));
+  const packSize = Number(sheetsPerPack) > 0 ? Number(sheetsPerPack) : 250;
+
+  if (total === 0) return '';
+
+  const fullPackages = Math.floor(total / packSize);
+  const remainder = total % packSize;
+
+  if (fullPackages >= 1) {
+    const packWord = fullPackages === 1 ? 'PACOTE FECHADO' : 'PACOTES FECHADOS';
+    const sheetWord = remainder === 1 ? 'FOLHA' : 'FOLHAS';
+    if (remainder > 0) {
+      return ` (${fullPackages} ${packWord} + ${remainder} ${sheetWord})`;
+    }
+    return ` (${fullPackages} ${packWord})`;
+  }
+
+  return '';
+}
+
+/**
+ * SELEÇÃO DE PAPEL POR PALAVRA-CHAVE (SUGESTÃO DINÂMICA):
+ * Se NÃO houver histórico gravado no banco para o serviço, analisa a descrição/nome do trabalho:
+ * - Se conter "CAPA" ou "FICHA" -> Seleciona papel de 180g (ex: Cartolina Branca - 180g).
+ * - Se conter "BLOCO", "FORMULÁRIO" ou "LIVRO" -> Seleciona papel de 75g (ex: Offset 75g).
+ * - Se conter "ETIQUETA" -> Selecionar papel Adesivo (ex: Adesivo Fosco - 180g).
+ * - Caso não se enquadre em nenhuma das regras acima: retorna '' (campo inicia totalmente vazio).
+ */
+export function sugerirPapelPorPalavraChave(
+  nomeTrabalho: string,
+  papersList: PaperFactory[]
+): string {
+  if (!nomeTrabalho || typeof nomeTrabalho !== 'string') return '';
+  const normalizado = nomeTrabalho
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+
+  // 1. "CAPA" ou "FICHA" -> Selecionar papel de 180g
+  if (normalizado.includes('CAPA') || normalizado.includes('FICHA')) {
+    const pap180 =
+      papersList.find((p) => p.grammage === 180 && !p.name.toLowerCase().includes('adesivo')) ||
+      papersList.find((p) => p.grammage === 180) ||
+      papersList.find((p) => p.name.includes('180'));
+    return pap180 ? pap180.id : '';
+  }
+
+  // 2. "BLOCO", "FORMULÁRIO" ou "LIVRO" -> Selecionar papel de 75g
+  if (
+    normalizado.includes('BLOCO') ||
+    normalizado.includes('FORMULARIO') ||
+    normalizado.includes('LIVRO')
+  ) {
+    const pap75 =
+      papersList.find(
+        (p) =>
+          p.grammage === 75 &&
+          !(p.color || '').toLowerCase().includes('azul') &&
+          !(p.color || '').toLowerCase().includes('amarela')
+      ) ||
+      papersList.find((p) => p.grammage === 75) ||
+      papersList.find((p) => p.name.includes('75'));
+    return pap75 ? pap75.id : '';
+  }
+
+  // 3. "ETIQUETA" -> Selecionar papel Adesivo
+  if (normalizado.includes('ETIQUETA')) {
+    const papAdesivo =
+      papersList.find(
+        (p) => p.name.toLowerCase().includes('adesivo') || p.code.toLowerCase().includes('ad')
+      ) ||
+      papersList.find((p) => p.name.toLowerCase().includes('adesivo'));
+    return papAdesivo ? papAdesivo.id : '';
+  }
+
+  return '';
+}
+

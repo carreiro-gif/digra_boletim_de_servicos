@@ -6,6 +6,9 @@ import {
   getCurrentProductionMonth,
   getProductionMonthOptions,
   MONTHS_PT,
+  formatPackageBreakdownText,
+  formatCutterPackageSpec,
+  sugerirPapelPorPalavraChave,
 } from '../utils/graphicMath';
 import { PRINT_CUT_FORMATS } from '../data/initialData.ts';
 import { CuttingSchematic } from './CuttingSchematic';
@@ -13,6 +16,7 @@ import { PjerjLogo } from './PjerjLogo';
 import { ServiceOrder, MaterialType } from '../types';
 import {
   obterParametrosAprendizadoContinuo,
+  buscarUltimaOSPorCodigo,
 } from '../utils/importadorSismat';
 import {
   FileText,
@@ -202,12 +206,12 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
       return sCodeClean === clean || sCodeClean.includes(clean);
     });
 
-    const aprendizado = obterParametrosAprendizadoContinuo(clean, orders, papers, PRINT_CUT_FORMATS);
+    const jobName = svc?.name || (svc as any)?.descricao || (svc as any)?.description || '';
 
-    // 2) CAPAS AUTOMÁTICAS:
-    // Quando o material escolhido for uma capa (categoria que contenha "CAPA" ou nome que comece com "Capa"),
-    // marque automaticamente o tipo PACOTE (com 100 unidades por pacote, editável), além de preencher
-    // Corte para Impressão SRA3 (328x480 mm) e Corte Final 320x460 mm como já está. Tudo continua editável.
+    // 1. AUTOAPRENDIZADO: Verifica se HÁ HISTÓRICO REAL GRAVADO NO BANCO DE DADOS (orders)
+    // Se o usuário já emitiu ou alterou uma O.S. para este código, o banco guarda a preferência exata
+    const ultimaOSBanco = buscarUltimaOSPorCodigo(clean, orders);
+
     const isCapa = Boolean(
       (svc && (
         (svc.category && svc.category.toUpperCase().includes('CAPA')) ||
@@ -215,9 +219,9 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
         ((svc as any).categoria && String((svc as any).categoria).toUpperCase().includes('CAPA')) ||
         ((svc as any).descricao && String((svc as any).descricao).trim().toLowerCase().startsWith('capa'))
       )) ||
-      (aprendizado?.order && (
-        (aprendizado.order.serviceCategory && aprendizado.order.serviceCategory.toUpperCase().includes('CAPA')) ||
-        (aprendizado.order.serviceName && aprendizado.order.serviceName.trim().toLowerCase().startsWith('capa'))
+      (ultimaOSBanco && (
+        (ultimaOSBanco.serviceCategory && ultimaOSBanco.serviceCategory.toUpperCase().includes('CAPA')) ||
+        (ultimaOSBanco.serviceName && ultimaOSBanco.serviceName.trim().toLowerCase().startsWith('capa'))
       ))
     );
 
@@ -225,58 +229,59 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
       (f) => f.name.toUpperCase() === 'SRA3' || f.id === 'fmt-sra3' || (f.widthMm === 328 && f.heightMm === 480)
     );
 
-    if (isCapa) {
-      lastAppliedCodeRef.current = clean;
-      setMaterialType('PACOTE');
-      setUnitsPerPackage(100);
-      if (sra3Format) {
-        setSelectedFormatId(sra3Format.id);
-      }
-      setFinalCutSize('320x460 mm');
-      if (aprendizado && aprendizado.found) {
-        if (aprendizado.paperId) setSelectedPaperId(aprendizado.paperId);
-        if (aprendizado.machine && !machine) setMachine(aprendizado.machine);
+    lastAppliedCodeRef.current = clean;
+
+    if (ultimaOSBanco) {
+      // REGRA DE AUTOAPRENDIZADO ATIVO:
+      // Se houver histórico gravado no banco, traz rigorosamente o último papel salvo no banco, ignorando a regra do nome.
+      if (ultimaOSBanco.paperId) setSelectedPaperId(ultimaOSBanco.paperId);
+      if (ultimaOSBanco.cutFormatId) setSelectedFormatId(ultimaOSBanco.cutFormatId);
+      if (ultimaOSBanco.finalCutSize !== undefined) setFinalCutSize(ultimaOSBanco.finalCutSize);
+      if (ultimaOSBanco.machine && !machine) setMachine(ultimaOSBanco.machine);
+
+      if (isCapa) {
+        setMaterialType('PACOTE');
+        setUnitsPerPackage(100);
+        if (!ultimaOSBanco.cutFormatId && sra3Format) setSelectedFormatId(sra3Format.id);
+        if (!ultimaOSBanco.finalCutSize) setFinalCutSize('320x460 mm');
+      } else {
+        setMaterialType('OUTROS');
       }
 
-      const paperObj = papers.find((p) => p.id === (aprendizado?.paperId || selectedPaperId));
+      const paperObj = papers.find((p) => p.id === ultimaOSBanco.paperId);
+      const formatObj = PRINT_CUT_FORMATS.find((f) => f.id === ultimaOSBanco.cutFormatId) || formats.find((f) => f.id === ultimaOSBanco.cutFormatId);
 
       setLearningInfo({
-        orderNumber: aprendizado?.order?.orderNumber || 'Padrão Automático Capa SRA3',
-        productionMonth: aprendizado?.order?.productionMonth || 'Histórico Consolidado',
-        paperName: aprendizado?.order?.paperName || paperObj?.name || '',
-        cutFormatName: 'SRA3 (328×480 mm)',
-        finalCutSize: '320x460 mm',
+        orderNumber: ultimaOSBanco.orderNumber || 'Histórico Banco de Dados',
+        productionMonth: ultimaOSBanco.productionMonth || 'Histórico Consolidado',
+        paperName: ultimaOSBanco.paperName || paperObj?.name || '',
+        cutFormatName: ultimaOSBanco.cutFormatName || formatObj?.name || '',
+        finalCutSize: ultimaOSBanco.finalCutSize || '',
         blocksQty: 0,
         breakMargin: 10,
-        machine: aprendizado?.machine || machine,
+        machine: ultimaOSBanco.machine,
       });
     } else {
-      setMaterialType('OUTROS');
-      if (aprendizado && aprendizado.found) {
-        lastAppliedCodeRef.current = clean;
-        // O autopreenchimento pelo histórico continua só para Papel, Corte para Impressão e Corte Final
-        if (aprendizado.paperId) setSelectedPaperId(aprendizado.paperId);
-        if (aprendizado.cutFormatId) setSelectedFormatId(aprendizado.cutFormatId);
-        if (aprendizado.finalCutSize !== undefined) setFinalCutSize(aprendizado.finalCutSize);
-        if (aprendizado.machine && !machine) setMachine(aprendizado.machine);
+      // NÃO HÁ HISTÓRICO GRAVADO NO BANCO:
+      // SELEÇÃO DE PAPEL POR PALAVRA-CHAVE (SUGESTÃO DINÂMICA):
+      // Analisa o texto do campo 'Descrição/Nome do Trabalho':
+      // * Se conter "CAPA" ou "FICHA" -> Selecionar papel de 180g.
+      // * Se conter "BLOCO", "FORMULÁRIO" ou "LIVRO" -> Selecionar papel de 75g.
+      // * Se conter "ETIQUETA" -> Selecionar papel Adesivo.
+      // Caso não se enquadre em nenhuma das regras acima, o campo de Papel inicia totalmente vazio.
+      const papelSugeridoId = sugerirPapelPorPalavraChave(jobName, papers);
+      setSelectedPaperId(papelSugeridoId);
 
-        const paperObj = papers.find((p) => p.id === aprendizado.paperId);
-        const formatObj = PRINT_CUT_FORMATS.find((f) => f.id === aprendizado.cutFormatId) || formats.find((f) => f.id === aprendizado.cutFormatId);
-
-        setLearningInfo({
-          orderNumber: aprendizado.order?.orderNumber || 'Ficha SISMAT Oficial',
-          productionMonth: aprendizado.order?.productionMonth || 'Histórico Consolidado',
-          paperName: aprendizado.order?.paperName || paperObj?.name || '',
-          cutFormatName: aprendizado.order?.cutFormatName || formatObj?.name || '',
-          finalCutSize: aprendizado.finalCutSize || '',
-          blocksQty: 0,
-          breakMargin: 10,
-          machine: aprendizado.machine,
-        });
+      if (isCapa) {
+        setMaterialType('PACOTE');
+        setUnitsPerPackage(100);
+        if (sra3Format) setSelectedFormatId(sra3Format.id);
+        setFinalCutSize('320x460 mm');
       } else {
-        lastAppliedCodeRef.current = clean;
-        setLearningInfo(null);
+        setMaterialType('OUTROS');
       }
+
+      setLearningInfo(null);
     }
   }, [serviceCodeInput, orders, papers, formats, services, editingOrderId, machine]);
 
@@ -421,10 +426,10 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
     if (!machine || !machine.trim()) missing.push('Máquina de Impressão');
     if (!productionMonth || !productionMonth.trim()) missing.push('Mês de Produção');
     if (!matchedService) missing.push('Código do Serviço (válido no catálogo)');
-    if (!activePaper) missing.push('Papel de Fábrica');
+    if (!activePaper || !selectedPaperId) missing.push('Papel de Fábrica (obrigatório selecionar)');
     if (!activeFormat) missing.push('Corte para Impressão');
     if (!blocksQty || Number(blocksQty) <= 0) missing.push('Quantidade (obrigatória e maior que 0)');
-    if (!imagesPerPlate || Number(imagesPerPlate) <= 0) missing.push('Imagens por Chapa (obrigatório e mínimo 1)');
+    if (!imagesPerPlate || Number(imagesPerPlate) <= 0) missing.push('Imagens por Folha (obrigatório e mínimo 1)');
 
     const numWays = Number(ways) || 1;
     if (numWays > 1) {
@@ -1196,7 +1201,7 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                       if (validationError) setValidationError(null);
                     }}
                     className={`w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 ${
-                      !activePaper && validationError ? 'border-red-500 ring-1 ring-red-500' : 'border-slate-300'
+                      !selectedPaperId ? 'border-red-400 ring-1 ring-red-300' : 'border-slate-300'
                     }`}
                   >
                     <option value="">Selecione o Papel...</option>
@@ -1206,6 +1211,11 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                       </option>
                     ))}
                   </select>
+                  {!selectedPaperId && (
+                    <span className="text-[11px] font-bold text-red-600 block mt-1.5 leading-tight">
+                      ⚠️ Por favor, selecione o papel para este trabalho
+                    </span>
+                  )}
                 </div>
 
                 {/* 1. Seleção do Corte para Impressão (Motor do Cálculo Gráfico Obrigatório) */}
@@ -1405,10 +1415,10 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                   <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">Padrão: 1 via</span>
                 </div>
 
-                {/* Imagens por Chapa (obrigatória, fica vazia até preencher) */}
+                {/* Imagens por Folha (Baseado no Corte Selecionado) */}
                 <div>
                   <label className="block text-xs font-bold text-blue-900 mb-1">
-                    Imagens / Chapa: <span className="text-red-500">*</span>
+                    Imagens por Folha: <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -1419,12 +1429,14 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                       setImagesPerPlate(isNaN(val as number) ? '' : val);
                       if (validationError) setValidationError(null);
                     }}
-                    placeholder="Ex: 2"
+                    placeholder="Ex: 16"
                     className={`w-full bg-blue-50 border rounded-lg px-3 py-2 text-sm font-mono font-bold text-blue-950 focus:ring-2 focus:ring-blue-500 ${
                       validationError && (!imagesPerPlate || Number(imagesPerPlate) <= 0) ? 'border-red-500 ring-1 ring-red-500' : 'border-blue-400'
                     }`}
                   />
-                  <span className="text-[10px] text-blue-800 block mt-0.5 font-medium">Divisor chapa</span>
+                  <span className="text-[10px] text-blue-800 block mt-0.5 font-medium">
+                    Poses no corte {activeFormat ? `(${activeFormat.name})` : ''}
+                  </span>
                 </div>
 
                 {/* 3) RENOMEADO: Sobra (Acerto) em Porcentagem (padrão 10%, editável) */}
@@ -1640,23 +1652,34 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
                       </span>
                     </div>
                   </div>
+                  <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-xs font-semibold text-blue-950 leading-relaxed">
+                    Serão necessárias exatamente <strong>{calculation.totalFinalSheets.toLocaleString('pt-BR')}</strong> folhas no formato <strong>{activeFormat?.name || 'Corte para Impressão'}</strong> para rodar o trabalho, mais as folhas de sobra configuradas.
+                  </div>
                   <div className="p-2 bg-white/95 border border-emerald-300 rounded-lg font-mono text-xs text-emerald-900 font-bold leading-relaxed space-y-1">
                     {calculation.colorBreakdown.length > 1 ? (
-                      calculation.colorBreakdown.map((item, idx) => (
-                        <div key={idx}>
-                          ✂️ <strong>CORTADOR:</strong> CORTAR EXATAMENTE <strong>{item.totalColorSheets.toLocaleString('pt-BR')}</strong> FOLHAS INTEIRAS {activePaper?.name ? activePaper.name.toUpperCase() : 'PAPEL'} COR {item.color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO {activeFormat?.name || 'CORTE'} (FORMATO {calculation.yieldPerSheet})
-                        </div>
-                      ))
+                      calculation.colorBreakdown.map((item, idx) => {
+                        const packSpec = formatCutterPackageSpec(item.totalColorSheets, activePaper?.packageSheets || 250);
+                        return (
+                          <div key={idx}>
+                            ✂️ <strong>CORTADOR:</strong> CORTAR EXATAMENTE <strong>{item.totalColorSheets.toLocaleString('pt-BR')}</strong> FOLHAS INTEIRAS{packSpec} {activePaper?.name ? activePaper.name.toUpperCase() : 'PAPEL'} COR {item.color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO {activeFormat?.name || 'CORTE'} (FORMATO {calculation.yieldPerSheet})
+                          </div>
+                        );
+                      })
                     ) : (
-                      <div>
-                        ✂️ <strong>CORTADOR:</strong> CORTAR EXATAMENTE <strong>{calculation.totalFactorySheetsUsed.toLocaleString('pt-BR')}</strong> FOLHAS INTEIRAS {activePaper?.name ? activePaper.name.toUpperCase() : 'PAPEL'} NO FORMATO DE CORTE PARA IMPRESSÃO {activeFormat?.name || 'CORTE'} (FORMATO {calculation.yieldPerSheet})
-                      </div>
+                      (() => {
+                        const packSpec = formatCutterPackageSpec(calculation.totalFactorySheetsUsed, activePaper?.packageSheets || 250);
+                        return (
+                          <div>
+                            ✂️ <strong>CORTADOR:</strong> CORTAR EXATAMENTE <strong>{calculation.totalFactorySheetsUsed.toLocaleString('pt-BR')}</strong> FOLHAS INTEIRAS{packSpec} {activePaper?.name ? activePaper.name.toUpperCase() : 'PAPEL'} NO FORMATO DE CORTE PARA IMPRESSÃO {activeFormat?.name || 'CORTE'} (FORMATO {calculation.yieldPerSheet})
+                          </div>
+                        );
+                      })()
                     )}
                   </div>
                 </div>
               ) : (
                 <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-center text-xs text-amber-900 font-medium">
-                  Preencha a <strong>Quantidade</strong> e <strong>Imagens / Chapa</strong> para visualizar os cálculos em tempo real.
+                  Preencha a <strong>Quantidade</strong> e <strong>Imagens por Folha</strong> para visualizar os cálculos em tempo real.
                 </div>
               )}
 
@@ -1671,23 +1694,31 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
               )}
 
               {/* 1. Total Folhas Finais Impressas */}
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
-                <div>
-                  <span className="text-xs text-slate-700 block font-bold">
-                    1. Total Folhas Finais Impressas
-                  </span>
-                  <span className="text-[11px] text-slate-500 font-mono">
-                    {calculation.rawUnits > 0
-                      ? `(${calculation.rawUnits.toLocaleString('pt-BR')} un${Number(ways) > 1 ? ` × ${ways} vias` : ''}) ÷ ${imagesPerPlate || 1} img/chapa`
-                      : '0 folhas impressas'}
-                  </span>
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-xs text-slate-700 block font-bold">
+                      1. Total Folhas Finais Impressas
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-mono">
+                      {calculation.rawUnits > 0
+                        ? `(${calculation.rawUnits.toLocaleString('pt-BR')} un${Number(ways) > 1 ? ` × ${ways} vias` : ''}) ÷ ${imagesPerPlate || 1} img/folha`
+                        : '0 folhas impressas'}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xl font-black font-mono text-blue-900">
+                      {calculation.totalFinalSheets.toLocaleString('pt-BR')}
+                    </span>
+                    <span className="text-[10px] text-slate-500 block font-medium">folhas impressas</span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-xl font-black font-mono text-blue-900">
-                    {calculation.totalFinalSheets.toLocaleString('pt-BR')}
-                  </span>
-                  <span className="text-[10px] text-slate-500 block font-medium">folhas impressas</span>
-                </div>
+
+                {calculation.totalFinalSheets > 0 && (
+                  <div className="text-[11px] text-blue-950 bg-blue-50/90 border border-blue-200 rounded-lg p-2 font-medium leading-relaxed">
+                    Serão necessárias exatamente <strong>{calculation.totalFinalSheets.toLocaleString('pt-BR')}</strong> folhas no formato <strong>{activeFormat?.name || 'Corte para Impressão'}</strong> para rodar o trabalho, mais as folhas de sobra configuradas.
+                  </div>
+                )}
               </div>
 
               {/* 2. Aproveitamento */}
@@ -1795,19 +1826,19 @@ export const OrderEmissionView: React.FC<OrderEmissionViewProps> = ({
               <div className="p-4 rounded-xl bg-blue-50 text-blue-900 border-2 border-blue-300 shadow-xs flex items-center justify-between">
                 <div>
                   <span className="text-xs uppercase font-black tracking-wider text-blue-900 block">
-                    Gasto Total
+                    Gasto Total de Papel (FLS)
                   </span>
                   <span className="text-[11px] text-blue-800 font-semibold">
                     {calculation.fullSheetsNeeded} líquidas + {calculation.breakSheetsNeeded} sobra
                   </span>
                   {activePaper && (
-                    <span className="inline-block mt-1 text-[10px] font-bold text-blue-950 bg-blue-200/70 border border-blue-300 px-2 py-0.5 rounded">
-                      ~ {calculation.packagesCount} pacotes ({activePaper.packageSheets} fls/pct)
+                    <span className="block mt-1 text-[11px] font-bold text-blue-950 bg-blue-200/70 border border-blue-300 px-2.5 py-0.5 rounded">
+                      {formatPackageBreakdownText(calculation.totalFactorySheetsUsed, activePaper.packageSheets || 250)}
                     </span>
                   )}
                 </div>
                 <div className="text-right">
-                  <span className="text-3xl font-black font-mono text-blue-950 tracking-tight">
+                  <span className="text-3xl font-black font-mono text-blue-950 tracking-tight block">
                     {calculation.totalFactorySheetsUsed.toLocaleString('pt-BR')}
                   </span>
                   <span className="text-[11px] uppercase font-bold text-blue-800 block">

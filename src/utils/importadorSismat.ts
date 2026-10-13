@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 
 const xlsxLib: any = ('default' in XLSX ? (XLSX as any).default : XLSX) || XLSX;
-import { ServiceOrder, PaperFactory, CutFormat, ServiceCatalog, OrderStatus } from '../types';
+import { ServiceOrder, PaperFactory, CutFormat, ServiceCatalog, OrderStatus, MaterialType } from '../types';
 import { calculateOrderMath } from './graphicMath';
 import { db, isFirebaseConfigured } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -282,7 +282,15 @@ export function converterFichaEmServiceOrder(
     service = neededService;
   }
 
-  // Cálculo Gráfico Oficial
+  // Determina o tipo de material para o cálculo oficial
+  let materialType: MaterialType = 'BLOCO';
+  if (ficha.trabalho.toLowerCase().includes('capa')) materialType = 'PACOTE';
+  else if (ficha.trabalho.toLowerCase().includes('pacote')) materialType = 'PACOTE';
+  else if (ficha.trabalho.toLowerCase().includes('ficha')) materialType = 'FICHA';
+  else if (ficha.trabalho.toLowerCase().includes('etiqueta')) materialType = 'ETIQUETA';
+  else if (ficha.sheetsPerBlock <= 1 && ficha.blocksQty > 0) materialType = 'OUTROS';
+
+  // Cálculo Gráfico Oficial (sem divisão indevida do total de folhas)
   const math = calculateOrderMath({
     blocksQty: ficha.blocksQty,
     sheetsPerBlock: ficha.sheetsPerBlock,
@@ -293,6 +301,9 @@ export function converterFichaEmServiceOrder(
     sheetH: paper.heightMm,
     cutW: format.widthMm,
     cutH: format.heightMm,
+    materialType,
+    unitMultiplier: ficha.sheetsPerBlock,
+    surplusPercent: 10,
   });
 
   const packagesCount =
@@ -329,6 +340,13 @@ export function converterFichaEmServiceOrder(
     ways: ficha.ways,
     imagesPerPlate: ficha.imagesPerPlate || 1,
     breakMargin: ficha.breakMargin,
+    materialType,
+    unitMultiplier: ficha.sheetsPerBlock,
+    surplusPercent: 10,
+    surplusSheets: math.breakSheetsNeeded,
+    totalPrintedSheets: math.totalPrintedSheets,
+    calcFormulaDescription: math.formulaDescription,
+    colorBreakdown: math.colorBreakdown,
     totalFinalSheets: math.totalFinalSheets,
     yieldPerSheet: ficha.yieldPerSheet || math.yieldPerSheet,
     cutsDescription: math.cutsDescription,

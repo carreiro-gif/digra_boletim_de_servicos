@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react';
 import { ServiceOrder } from '../types';
-import { calculateCutYield, formatProductionFormula } from '../utils/graphicMath';
+import {
+  calculateCutYield,
+  formatProductionFormula,
+  formatPackageBreakdownText,
+  formatCutterPackageSpec,
+} from '../utils/graphicMath';
 import { Printer, X, Scissors } from 'lucide-react';
 
 interface PrintA4OrderModalProps {
@@ -53,11 +58,13 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
     const paperLabel = (order.paperName || 'PAPEL').toUpperCase();
     const formatName = rawFormat;
     const yieldNum = order.yieldPerSheet || 1;
+    const packSize = order.packageSheets || 250;
 
     // Se temos breakdown salvo na O.S.
     if (order.colorBreakdown && order.colorBreakdown.length > 0 && order.ways && order.ways > 1) {
       return order.colorBreakdown.map((item) => {
-        return `✂️ CORTADOR: CORTAR EXATAMENTE ${item.totalColorSheets.toLocaleString('pt-BR')} FOLHAS INTEIRAS ${paperLabel} COR ${item.color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`;
+        const packSpec = formatCutterPackageSpec(item.totalColorSheets, packSize);
+        return `✂️ CORTADOR: CORTAR EXATAMENTE ${item.totalColorSheets.toLocaleString('pt-BR')} FOLHAS INTEIRAS${packSpec} ${paperLabel} COR ${item.color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`;
       });
     }
 
@@ -80,14 +87,16 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
         const liquidColorSheets = Math.ceil(printedColorSheets / yieldNum);
         const surplusColorSheets = Math.ceil((liquidColorSheets * surplusPct) / 100);
         const totalColorSheets = liquidColorSheets + surplusColorSheets;
-        list.push(`✂️ CORTADOR: CORTAR EXATAMENTE ${totalColorSheets.toLocaleString('pt-BR')} FOLHAS INTEIRAS ${paperLabel} COR ${color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`);
+        const packSpec = formatCutterPackageSpec(totalColorSheets, packSize);
+        list.push(`✂️ CORTADOR: CORTAR EXATAMENTE ${totalColorSheets.toLocaleString('pt-BR')} FOLHAS INTEIRAS${packSpec} ${paperLabel} COR ${color.toUpperCase()} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`);
       });
       return list;
     }
 
     // Vias = 1 (ou legado sem cores): frase clássica sem cor
+    const packSpec = formatCutterPackageSpec(totalSheetsToCut, packSize);
     return [
-      `✂️ CORTADOR: CORTAR EXATAMENTE ${totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS INTEIRAS ${paperLabel} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`
+      `✂️ CORTADOR: CORTAR EXATAMENTE ${totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS INTEIRAS${packSpec} ${paperLabel} NO FORMATO DE CORTE PARA IMPRESSÃO ${formatName} (FORMATO ${yieldNum})`
     ];
   }, [order, rawFormat, totalSheetsToCut]);
 
@@ -438,8 +447,8 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                     <strong className="text-sm font-black font-mono text-black mt-0.5 block">
                       {totalSheetsToCut.toLocaleString('pt-BR')} FOLHAS
                     </strong>
-                    <span className="block text-[7px] font-bold text-black leading-none mt-0.5">
-                      ~ {Math.ceil(totalSheetsToCut / (order.packageSheets || 250))} pct fechado(s)
+                    <span className="block text-[7.5px] font-bold text-black leading-none mt-0.5">
+                      {formatPackageBreakdownText(totalSheetsToCut, order.packageSheets || 250)}
                     </span>
                   </td>
                 </tr>

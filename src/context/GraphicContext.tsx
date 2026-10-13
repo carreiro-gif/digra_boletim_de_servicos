@@ -530,12 +530,16 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         blocksQty: data.blocksQty,
         sheetsPerBlock: data.sheetsPerBlock,
         ways: data.ways,
+        wayColors: data.wayColors,
         imagesPerPlate: data.imagesPerPlate || 1,
         breakMargin: data.breakMargin,
         sheetW: data.paperWidthMm,
         sheetH: data.paperHeightMm,
         cutW: data.cutWidthMm,
         cutH: data.cutHeightMm,
+        materialType: data.materialType,
+        unitMultiplier: data.unitMultiplier || data.sheetsPerBlock,
+        surplusPercent: data.surplusPercent !== undefined ? data.surplusPercent : 10,
       });
 
       const packageSheets = data.packageSheets || 250;
@@ -594,12 +598,16 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
             blocksQty: merged.blocksQty,
             sheetsPerBlock: merged.sheetsPerBlock,
             ways: merged.ways,
+            wayColors: merged.wayColors,
             imagesPerPlate: merged.imagesPerPlate || 1,
             breakMargin: merged.breakMargin,
             sheetW: merged.paperWidthMm,
             sheetH: merged.paperHeightMm,
             cutW: merged.cutWidthMm,
             cutH: merged.cutHeightMm,
+            materialType: merged.materialType,
+            unitMultiplier: merged.unitMultiplier || merged.sheetsPerBlock,
+            surplusPercent: merged.surplusPercent !== undefined ? merged.surplusPercent : 10,
           });
 
           const packageSheets = merged.packageSheets || 250;
