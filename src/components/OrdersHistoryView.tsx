@@ -37,9 +37,25 @@ export const OrdersHistoryView: React.FC<OrdersHistoryViewProps> = ({
   const [statusFilter, setStatusFilter] = useState<string>('todos');
   const [olderFetchFeedback, setOlderFetchFeedback] = useState<string | null>(null);
 
-  // Filtragem inteligente de O.S.
+  // 1. FILTRO DE SEGURANÇA VISUAL (Iniciar do Zero):
+  // Oculta registros importados em lote do SISMAT (emissor ou criador "DIGRA / SISMAT").
+  // A tabela de histórico e os contadores visuais exibem estritamente as Ordens de Serviço
+  // emitidas ativamente na tela pelos operadores (ex: criadas para testes ou rotina real).
+  const visibleOrders = useMemo(() => {
+    return orders.filter((o) => {
+      const creator = (o.createdBy || '').trim().toUpperCase();
+      const obs = (o.observation || '').toUpperCase();
+      return (
+        creator !== 'DIGRA / SISMAT' &&
+        !creator.includes('SISMAT') &&
+        !obs.includes('IMPORTADO VIA SISMAT')
+      );
+    });
+  }, [orders]);
+
+  // Filtragem inteligente de O.S. sobre as ordens visíveis de operadores
   const filteredOrders = useMemo(() => {
-    let result = orders;
+    let result = visibleOrders;
 
     if (statusFilter !== 'todos') {
       result = result.filter((o) => o.status === statusFilter);
@@ -70,7 +86,7 @@ export const OrdersHistoryView: React.FC<OrdersHistoryViewProps> = ({
         matchMachine
       );
     });
-  }, [orders, searchTerm, statusFilter]);
+  }, [visibleOrders, searchTerm, statusFilter]);
 
   const handleFetchOlder = async () => {
     const count = await loadOlderOrdersFromFirestore();
@@ -82,12 +98,16 @@ export const OrdersHistoryView: React.FC<OrdersHistoryViewProps> = ({
     setTimeout(() => setOlderFetchFeedback(null), 4000);
   };
 
-  const handleDeleteOrder = (order: ServiceOrder) => {
+  const handleDeleteOrder = async (order: ServiceOrder) => {
     const confirmed = window.confirm(
       `Deseja realmente excluir permanentemente a O.S. ${order.orderNumber}?\n\nEsta ação removerá o registro do banco de dados Firebase Firestore e não poderá ser desfeita.`
     );
     if (!confirmed) return;
-    deleteOrder(order.id);
+    try {
+      await deleteOrder(order.id);
+    } catch (err) {
+      console.error('Erro ao excluir O.S.:', err);
+    }
   };
 
   return (
@@ -104,7 +124,7 @@ export const OrdersHistoryView: React.FC<OrdersHistoryViewProps> = ({
                 Histórico de O.S.
               </h2>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
-                {orders.length} {orders.length === 1 ? 'registro' : 'registros'}
+                {visibleOrders.length} {visibleOrders.length === 1 ? 'registro' : 'registros'}
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -220,7 +240,7 @@ export const OrdersHistoryView: React.FC<OrdersHistoryViewProps> = ({
             <FileSpreadsheet className="w-4 h-4 text-blue-600" />
             <span className="font-bold text-slate-700">Listagem Completa</span>
             <span>&bull;</span>
-            <span>Exibindo <strong>{filteredOrders.length}</strong> de <strong>{orders.length}</strong> O.S.</span>
+            <span>Exibindo <strong>{filteredOrders.length}</strong> de <strong>{visibleOrders.length}</strong> O.S.</span>
           </div>
         </div>
 

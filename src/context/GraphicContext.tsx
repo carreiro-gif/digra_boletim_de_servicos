@@ -65,7 +65,7 @@ interface GraphicContextType {
     > & { orderNumber?: string }
   ) => Promise<ServiceOrder>;
   updateOrder: (id: string, data: Partial<ServiceOrder>) => Promise<ServiceOrder | undefined>;
-  deleteOrder: (id: string) => void;
+  deleteOrder: (id: string) => Promise<void>;
   updateOrderStatus: (id: string, status: OrderStatus) => void;
   getNextOrderNumber: () => string;
 
@@ -649,7 +649,7 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 
   const deleteOrder = useCallback(
-    (id: string) => {
+    async (id: string): Promise<void> => {
       setOrders((prev) => {
         const updated = prev.filter((o) => o.id !== id);
         broadcastUpdate('SYNC_ORDERS', updated);
@@ -657,9 +657,11 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (isFirebaseConfigured && db) {
-        deleteDoc(doc(db, 'orders', id)).catch((e) =>
-          console.warn('[Firestore] Exclusão remota orders:', e?.message || e)
-        );
+        try {
+          await deleteDoc(doc(db, 'orders', id));
+        } catch (e: any) {
+          console.warn('[Firestore] Exclusão remota orders:', e?.message || e);
+        }
       }
     },
     [broadcastUpdate]
