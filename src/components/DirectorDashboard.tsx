@@ -97,7 +97,13 @@ export const DirectorDashboard: React.FC = () => {
               ...data,
             } as ServiceOrder;
           });
-          setRawFirestoreOrders(remoteList);
+
+          // Deduplicação absoluta por ID para zerar qualquer possibilidade de registros duplicados
+          const dedup = new Map<string, ServiceOrder>();
+          for (const ord of remoteList) {
+            if (ord.id) dedup.set(ord.id, ord);
+          }
+          setRawFirestoreOrders(Array.from(dedup.values()));
           setIsLiveConnected(true);
           setLastSyncTime(new Date());
         },
@@ -112,12 +118,18 @@ export const DirectorDashboard: React.FC = () => {
       console.warn('[DirectorDashboard] Falha ao registrar onSnapshot:', err);
       setRawFirestoreOrders(contextOrders);
     }
-  }, [contextOrders]);
+  }, []);
 
   const rawOrders = useMemo(() => {
-    if (rawFirestoreOrders.length > 0) return rawFirestoreOrders;
-    return contextOrders;
-  }, [rawFirestoreOrders, contextOrders]);
+    const source = (isLiveConnected && rawFirestoreOrders.length > 0) ? rawFirestoreOrders : contextOrders;
+    const dedupMap = new Map<string, ServiceOrder>();
+    for (const ord of source) {
+      if (ord && ord.id) {
+        dedupMap.set(ord.id, ord);
+      }
+    }
+    return Array.from(dedupMap.values());
+  }, [rawFirestoreOrders, contextOrders, isLiveConnected]);
 
   // 1. CORREÇÃO DO FILTRO DE DADOS (Zerar o Histórico do SISMAT):
   // Ignora RIGOROSAMENTE todas as ordens com criador "DIGRA / SISMAT", contendo "SISMAT" ou observação "IMPORTADO VIA SISMAT".
@@ -294,115 +306,174 @@ export const DirectorDashboard: React.FC = () => {
     });
   }, [allManualOrders, selectedMonth]);
 
-  // Agrupamento Consolidado por Tipo de Papel com Balanço em Tempo Real
-  const paperConsumptionGroup = useMemo(() => {
-    const groupMap: Record<
+  // 4. LISTA DINÂMICA DE TODOS OS TIPOS DE PAPÉIS ATIVOS CADASTRADOS NA GRÁFICA
+  const availablePapersList = useMemo(() => {
+    const map = new Map<
       string,
       {
-        paperId: string;
-        paperName: string;
-        paperCode: string;
+        id: string;
+        name: string;
+        code: string;
         packageSheets: number;
-        widthMm: number;
-        heightMm: number;
-        ordersCount: number;
-        totalFinalSheets: number;
-        fullSheetsNeeded: number;
-        breakMarginTotal: number;
-        totalFactorySheetsUsed: number;
-        initialStockSheets: number;
-        saldoAtualSheets: number;
-        ordersList: string[];
+        grammage?: number;
+        widthMm?: number;
+        heightMm?: number;
       }
-    > = {};
+    >();
 
-    filteredOrders.forEach((o) => {
-      const key = (o.paperName || o.paperCode || 'Papel Não Especificado').trim();
-      const pId = o.paperId || key;
-      const pkgSheets = Number(o.packageSheets) || 250;
+    // 1. Papéis padrão/ativos da gráfica
+    papers.forEach((p) => {
+      map.set(p.id, {
+        id: p.id,
+        name: p.name,
+        code: p.code || '',
+        packageSheets: p.packageSheets || 250,
+        grammage: p.grammage,
+        widthMm: p.widthMm,
+        heightMm: p.heightMm,
+      });
+    });
 
-      // Busca estoque inicial do cadastro base
+    // 2. Papéis das ordens emitidas
+    allManualOrders.forEach((o) => {
+      const pId = o.paperId;
+      const pName = o.paperName?.trim();
+      const key = pId || pName;
+      if (key && !map.has(key)) {
+        const existingByName = Array.from(map.values()).find(
+          (item) => pName && item.name.toLowerCase() === pName.toLowerCase()
+        );
+        if (!existingByName) {
+          map.set(key, {
+            id: key,
+            name: o.paperName || key,
+            code: o.paperCode || '',
+            packageSheets: Number(o.packageSheets) || 250,
+            widthMm: Number(o.paperWidthMm) || 0,
+            heightMm: Number(o.paperHeightMm) || 0,
+          });
+        }
+      }
+    });
+
+    // 3. Papéis cadastrados na base de estoque inicial
+    Object.values(estoqueBaseMap).forEach((item) => {
+      if (item.paperId && !map.has(item.paperId)) {
+        const existingByName = Array.from(map.values()).find(
+          (p) => item.paperName && p.name.toLowerCase() === item.paperName.toLowerCase()
+        );
+        if (!existingByName) {
+          map.set(item.paperId, {
+            id: item.paperId,
+            name: item.paperName || item.paperId,
+            code: item.paperCode || '',
+            packageSheets: item.packageSheets || 250,
+          });
+        }
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [papers, allManualOrders, estoqueBaseMap]);
+
+  // 5. AGRUPAMENTO CONSOLIDADO POR TIPO DE PAPEL COM BALANÇO EM TEMPO REAL
+  // RECALCULO DE CONSUMO DE ESTOQUE BASEADO EM ARRAY LIMPO (.reduce() puro, sem mutação residual)
+  // Fórmula Estrita de Varredura por Tipo de Papel:
+  // TotalFolhasGastasDoPapel = orders.filter(o => o.paperId === papelId && o.createdBy !== 'DIGRA / SISMAT').reduce((acc, current) => acc + current.totalFinalSheets, 0);
+  const paperConsumptionGroup = useMemo(() => {
+    return availablePapersList.map((paper) => {
+      const papelId = paper.id;
+      const paperName = paper.name;
+      const paperCode = paper.code || '';
+      const pkgSheets = paper.packageSheets || 250;
+
+      // Filtro rigoroso por papel sobre o array de ordens ativas
+      const matchingOrders = filteredOrders.filter((o) => {
+        const creator = (o.createdBy || '').trim().toUpperCase();
+        const obs = (o.observation || '').toUpperCase();
+        const isSismat =
+          creator === 'DIGRA / SISMAT' ||
+          creator.includes('SISMAT') ||
+          obs.includes('IMPORTADO VIA SISMAT');
+        if (isSismat) return false;
+
+        // 1. Prioridade absoluta para o paperId: se a ordem possuir paperId, compara estritamente pelo ID
+        if (o.paperId && papelId) {
+          return o.paperId === papelId;
+        }
+
+        // 2. Fallback apenas se a ordem for antiga/legada e não possuir paperId
+        return (
+          (o.paperName && paperName && o.paperName.trim().toLowerCase() === paperName.trim().toLowerCase()) ||
+          (paperCode && o.paperCode && o.paperCode.trim().toLowerCase() === paperCode.toLowerCase())
+        );
+      });
+
+      // Varredura estrita e pura com .reduce() do início ao fim (SEM acumulação residual na memória)
+      const ordersCount = matchingOrders.length;
+      const totalFinalSheets = matchingOrders.reduce(
+        (acc, current) => acc + (Number(current.totalFinalSheets) || 0),
+        0
+      );
+      const fullSheetsNeeded = matchingOrders.reduce(
+        (acc, current) => acc + (Number(current.fullSheetsNeeded) || 0),
+        0
+      );
+      const breakMarginTotal = matchingOrders.reduce(
+        (acc, current) =>
+          acc +
+          Number(current.surplusSheets !== undefined ? current.surplusSheets : (current.breakMargin || 0)),
+        0
+      );
+      const totalFactorySheetsUsed = matchingOrders.reduce((acc, current) => {
+        const used = Number(current.totalFactorySheetsUsed);
+        if (used > 0) return acc + used;
+        const liquid = Number(current.fullSheetsNeeded) || 0;
+        const surplus = Number(
+          current.surplusSheets !== undefined ? current.surplusSheets : (current.breakMargin || 0)
+        );
+        return acc + (liquid + surplus);
+      }, 0);
+
+      // Busca Estoque Inicial no 'estoque_base'
       const estoqueBaseInfo =
-        estoqueBaseMap[pId] ||
+        estoqueBaseMap[papelId] ||
+        estoqueBaseMap[paperName] ||
         Object.values(estoqueBaseMap).find(
-          (item) => item.paperName?.toLowerCase() === key.toLowerCase() || item.paperCode === o.paperCode
+          (item) =>
+            item.paperId === papelId ||
+            (item.paperName && item.paperName.toLowerCase() === paperName.toLowerCase()) ||
+            (paperCode && item.paperCode && item.paperCode.toLowerCase() === paperCode.toLowerCase())
         );
 
-      const initialStockSheets = estoqueBaseInfo ? estoqueBaseInfo.initialSheets : 0;
+      const initialStockSheets = estoqueBaseInfo ? Number(estoqueBaseInfo.initialSheets) || 0 : 0;
+      const saldoAtualSheets = initialStockSheets - totalFactorySheetsUsed;
+      const ordersList = matchingOrders.map((o) => o.orderNumber).filter(Boolean) as string[];
 
-      if (!groupMap[key]) {
-        groupMap[key] = {
-          paperId: pId,
-          paperName: o.paperName || key,
-          paperCode: o.paperCode || '',
-          packageSheets: pkgSheets,
-          widthMm: Number(o.paperWidthMm) || 0,
-          heightMm: Number(o.paperHeightMm) || 0,
-          ordersCount: 0,
-          totalFinalSheets: 0,
-          fullSheetsNeeded: 0,
-          breakMarginTotal: 0,
-          totalFactorySheetsUsed: 0,
-          initialStockSheets: initialStockSheets,
-          saldoAtualSheets: initialStockSheets,
-          ordersList: [],
-        };
-      }
-
-      const liquid = Number(o.fullSheetsNeeded) || 0;
-      const surplus = Number(o.surplusSheets !== undefined ? o.surplusSheets : o.breakMargin) || 0;
-      const totalUsed =
-        Number(o.totalFactorySheetsUsed) > 0
-          ? Number(o.totalFactorySheetsUsed)
-          : liquid + surplus;
-      const finalSheets = Number(o.totalFinalSheets) || 0;
-
-      groupMap[key].ordersCount += 1;
-      groupMap[key].totalFinalSheets += finalSheets;
-      groupMap[key].fullSheetsNeeded += liquid;
-      groupMap[key].breakMarginTotal += surplus;
-      groupMap[key].totalFactorySheetsUsed += totalUsed;
-      if (o.orderNumber) {
-        groupMap[key].ordersList.push(o.orderNumber);
-      }
+      return {
+        paperId: papelId,
+        paperName: paperName,
+        paperCode: paperCode,
+        packageSheets: pkgSheets,
+        widthMm: paper.widthMm || 0,
+        heightMm: paper.heightMm || 0,
+        ordersCount,
+        totalFinalSheets,
+        fullSheetsNeeded,
+        breakMarginTotal,
+        totalFactorySheetsUsed,
+        initialStockSheets,
+        saldoAtualSheets,
+        ordersList,
+      };
+    }).sort((a, b) => {
+      const aHasActivity = a.totalFactorySheetsUsed > 0 || a.initialStockSheets > 0;
+      const bHasActivity = b.totalFactorySheetsUsed > 0 || b.initialStockSheets > 0;
+      if (aHasActivity && !bHasActivity) return -1;
+      if (!aHasActivity && bHasActivity) return 1;
+      return b.totalFactorySheetsUsed - a.totalFactorySheetsUsed || a.paperName.localeCompare(b.paperName);
     });
-
-    // Se a aba estiver aberta e houver papéis cadastrados na base de estoque, garante que eles apareçam
-    // mesmo que ainda não tenham consumo, para que o Diretor veja o saldo intacto
-    papers.forEach((p) => {
-      const key = p.name.trim();
-      const pId = p.id;
-      const estoqueBaseInfo = estoqueBaseMap[pId] || estoqueBaseMap[key];
-
-      if (estoqueBaseInfo && !groupMap[key]) {
-        groupMap[key] = {
-          paperId: pId,
-          paperName: p.name,
-          paperCode: p.code || '',
-          packageSheets: p.packageSheets || 250,
-          widthMm: p.widthMm,
-          heightMm: p.heightMm,
-          ordersCount: 0,
-          totalFinalSheets: 0,
-          fullSheetsNeeded: 0,
-          breakMarginTotal: 0,
-          totalFactorySheetsUsed: 0,
-          initialStockSheets: estoqueBaseInfo.initialSheets,
-          saldoAtualSheets: estoqueBaseInfo.initialSheets,
-          ordersList: [],
-        };
-      }
-    });
-
-    // Calcula o saldo atual: [QUANTIDADE INICIAL] - [TOTAL FOLHAS GASTAS]
-    Object.values(groupMap).forEach((g) => {
-      g.saldoAtualSheets = g.initialStockSheets - g.totalFactorySheetsUsed;
-    });
-
-    return Object.values(groupMap).sort(
-      (a, b) => b.totalFactorySheetsUsed - a.totalFactorySheetsUsed
-    );
-  }, [filteredOrders, estoqueBaseMap, papers]);
+  }, [availablePapersList, filteredOrders, estoqueBaseMap]);
 
   // Métricas Consolidadas para os Cards Superiores
   const metrics = useMemo(() => {
@@ -480,77 +551,7 @@ export const DirectorDashboard: React.FC = () => {
   // 4. SELETOR REATIVO DE PAPEL PARA AUDITORIA (BI)
   const [selectedPaperFilter, setSelectedPaperFilter] = useState<string>('all');
 
-  // Lista dinâmica de todos os tipos de papéis ativos cadastrados na gráfica
-  const availablePapersList = useMemo(() => {
-    const map = new Map<
-      string,
-      {
-        id: string;
-        name: string;
-        code: string;
-        packageSheets: number;
-        grammage?: number;
-        widthMm?: number;
-        heightMm?: number;
-      }
-    >();
-
-    // 1. Papéis padrão/ativos da gráfica
-    papers.forEach((p) => {
-      map.set(p.id, {
-        id: p.id,
-        name: p.name,
-        code: p.code || '',
-        packageSheets: p.packageSheets || 250,
-        grammage: p.grammage,
-        widthMm: p.widthMm,
-        heightMm: p.heightMm,
-      });
-    });
-
-    // 2. Papéis das ordens emitidas
-    allManualOrders.forEach((o) => {
-      const pId = o.paperId;
-      const pName = o.paperName?.trim();
-      const key = pId || pName;
-      if (key && !map.has(key)) {
-        const existingByName = Array.from(map.values()).find(
-          (item) => pName && item.name.toLowerCase() === pName.toLowerCase()
-        );
-        if (!existingByName) {
-          map.set(key, {
-            id: key,
-            name: o.paperName || key,
-            code: o.paperCode || '',
-            packageSheets: Number(o.packageSheets) || 250,
-            widthMm: Number(o.paperWidthMm) || 0,
-            heightMm: Number(o.paperHeightMm) || 0,
-          });
-        }
-      }
-    });
-
-    // 3. Papéis cadastrados na base de estoque inicial
-    Object.values(estoqueBaseMap).forEach((item) => {
-      if (item.paperId && !map.has(item.paperId)) {
-        const existingByName = Array.from(map.values()).find(
-          (p) => item.paperName && p.name.toLowerCase() === item.paperName.toLowerCase()
-        );
-        if (!existingByName) {
-          map.set(item.paperId, {
-            id: item.paperId,
-            name: item.paperName || item.paperId,
-            code: item.paperCode || '',
-            packageSheets: item.packageSheets || 250,
-          });
-        }
-      }
-    });
-
-    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
-  }, [papers, allManualOrders, estoqueBaseMap]);
-
-  // Função para testar correspondência de papel em uma O.S.
+  // Função para testar correspondência de papel em uma O.S. (Prioridade absoluta para paperId)
   const isOrderMatchingPaper = (o: ServiceOrder, filterId: string): boolean => {
     if (filterId === 'all') return true;
 
@@ -562,10 +563,15 @@ export const DirectorDashboard: React.FC = () => {
     const oPaperName = (o.paperName || '').toLowerCase().trim();
     const oPaperCode = (o.paperCode || '').toLowerCase().trim();
 
+    // 1. Se ambos possuírem ID de papel cadastrado, a validação é estritamente pelo ID
+    if (oPaperId && target && target.id) {
+      return oPaperId === target.id;
+    }
     if (oPaperId && oPaperId === filterId) return true;
-    if (oPaperName === targetName) return true;
+
+    // 2. Fallback para registros antigos sem ID de papel: correspondência exata de código ou nome
     if (targetCode && oPaperCode && oPaperCode === targetCode) return true;
-    if (targetName && oPaperName && (oPaperName.includes(targetName) || targetName.includes(oPaperName))) return true;
+    if (targetName && oPaperName && oPaperName === targetName) return true;
 
     return false;
   };

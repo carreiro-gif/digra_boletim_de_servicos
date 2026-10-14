@@ -173,6 +173,10 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
             size: A4 portrait;
             margin: 4mm 5mm 4mm 5mm !important;
           }
+          /* Forçar linhas pretas puras em tabelas, células e divisões */
+          table, th, td, div {
+            border-color: #000000 !important;
+          }
           /* Forçar respeito aos cantos arredondados e bordas na impressão */
           .rounded-xl {
             border-radius: 0.75rem !important;
@@ -225,7 +229,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
       >
         <div>
           {/* ================= 1. REESTRUTURAÇÃO DO CABEÇALHO (LOGO, DIGRA, O.S.) ================= */}
-          <div className="rounded-xl border border-slate-300 p-2.5 mb-1.5 bg-white flex items-center justify-between gap-4 overflow-hidden">
+          <div className="rounded-xl border border-black p-2.5 mb-1.5 bg-white flex items-center justify-between gap-4 overflow-hidden">
             {/* Left: Brasão PJERJ + DIGRA em Negrito Forte */}
             <div className="flex items-center gap-3 flex-1">
               <img
@@ -250,14 +254,14 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
             </div>
 
             {/* Right: Bloco da O.S. Centralizado Horizontal e Verticalmente */}
-            <div className="border-l border-slate-300 pl-4 pr-2 py-0.5 flex flex-col items-center justify-center text-center shrink-0 min-w-[185px]">
+            <div className="border-l border-black pl-4 pr-2 py-0.5 flex flex-col items-center justify-center text-center shrink-0 min-w-[185px]">
               <span className="text-[8.5px] uppercase font-bold text-black tracking-wider leading-none">
                 NÚMERO DA O.S.
               </span>
               <span className="text-xl font-black font-mono tracking-tight text-black my-0.5 leading-none">
                 {cleanOrderNumber}
               </span>
-              <span className="text-[12px] font-black uppercase text-black tracking-wide leading-tight my-1 border-y border-slate-300 py-0.5 w-full block">
+              <span className="text-[12px] font-black uppercase text-black tracking-wide leading-tight my-1 border-y border-black py-0.5 w-full block">
                 BOLETIM DE SERVIÇO: BS {displayBsNumber || cleanOrderNumber}
               </span>
               <span className="text-[9.5px] font-bold uppercase text-black leading-tight">
@@ -267,7 +271,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
           </div>
 
           {/* ================= 2. CABEÇALHO OPERACIONAL DE PRODUÇÃO ================= */}
-          <div className="rounded-xl border border-slate-300 mb-1.5 grid grid-cols-2 divide-x divide-slate-300 bg-slate-50 overflow-hidden">
+          <div className="rounded-xl border border-black mb-1.5 grid grid-cols-2 divide-x divide-black bg-slate-50 overflow-hidden">
             <div className="px-3 py-1">
               <span className="block text-[8px] uppercase font-bold text-black leading-none">
                 Máquina de Impressão
@@ -287,7 +291,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
           </div>
 
           {/* ================= 3. TRABALHO / SERVIÇO & CÓDIGO DO MATERIAL ================= */}
-          <div className="rounded-xl border border-slate-300 p-2.5 mb-1.5 bg-white overflow-hidden">
+          <div className="rounded-xl border border-black p-2.5 mb-1.5 bg-white overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               {/* Left: Nome do Serviço + Categoria */}
               <div className="flex-1">
@@ -296,7 +300,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                     Descrição Oficial do Trabalho Gráfico
                   </span>
                   {order.serviceCategory && (
-                    <span className="px-1.5 py-0.2 bg-slate-100 text-black border border-slate-300 text-[7.5px] font-black uppercase rounded-sm">
+                    <span className="px-1.5 py-0.2 bg-slate-100 text-black border border-black text-[7.5px] font-black uppercase rounded-sm">
                       {order.serviceCategory}
                     </span>
                   )}
@@ -317,7 +321,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                   }}
                   className="refile-contrast-box relative text-black px-3.5 py-1.5 rounded-xl border-2 border-black text-center shrink-0 min-w-[145px] shadow-xs overflow-hidden"
                 >
-                  <span className="block text-[8px] uppercase tracking-widest text-black font-black leading-none bg-white/95 px-1.5 py-0.5 rounded-sm border border-slate-400 mx-auto w-max mb-1">
+                  <span className="block text-[8px] uppercase tracking-widest text-black font-black leading-none bg-white/95 px-1.5 py-0.5 rounded-sm border border-black mx-auto w-max mb-1">
                     CORTE FINAL (REFILE)
                   </span>
                   <span className="text-2xl font-black text-black tracking-wider block leading-none font-mono bg-white/95 px-2 py-0.5 rounded-md border-2 border-black">
@@ -325,7 +329,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                   </span>
                 </div>
 
-                <div className="bg-slate-50 text-black px-3 py-1.5 rounded-xl border border-slate-300 text-center shrink-0 min-w-[125px]">
+                <div className="bg-slate-50 text-black px-3 py-1.5 rounded-xl border border-black text-center shrink-0 min-w-[125px]">
                   <span className="block text-[7.5px] uppercase tracking-widest text-slate-700 font-bold leading-none">
                     CÓDIGO DO MATERIAL
                   </span>
@@ -338,7 +342,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
 
             {/* Condicional de Impressão: Oculta se vazio */}
             {order.observation && order.observation.trim() !== '' && (
-              <div className="mt-1 text-[9px] text-black bg-slate-50 p-1.5 border border-slate-300 rounded-lg">
+              <div className="mt-1 text-[9px] text-black bg-slate-50 p-1.5 border border-black rounded-lg">
                 <strong className="font-black uppercase text-[8.5px] text-black">
                   Observação Técnica:
                 </strong>{' '}
@@ -348,8 +352,8 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
           </div>
 
           {/* ================= 4. TABELA DE ESPECIFICAÇÃO & CONSUMO DE PAPEL ================= */}
-          <div className="rounded-xl border border-slate-300 overflow-hidden mb-1.5 bg-white">
-            <div className="bg-slate-200/90 text-black border-b border-slate-300 px-2.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider flex items-center justify-between">
+          <div className="rounded-xl border border-black overflow-hidden mb-1.5 bg-white">
+            <div className="bg-slate-200/90 text-black border-b border-black px-2.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider flex items-center justify-between">
               <span>Logística de Produção e Consumo de Papel</span>
               <span className="font-mono text-black font-bold">DIGRA • PJERJ</span>
             </div>
@@ -357,7 +361,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
             <table className="w-full text-[9.5px]" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
               <tbody>
                 {/* Row 1: Especificações do Papel */}
-                <tr className="border-b border-slate-300 divide-x divide-slate-300 bg-slate-50/80 font-semibold">
+                <tr className="border-b border-black divide-x divide-black bg-slate-50/80 font-semibold">
                   <td className="p-1 w-1/4 text-center">
                     <span className="block text-[7.5px] uppercase font-bold text-slate-700 mb-0.5 leading-none">
                       PAPEL
@@ -396,7 +400,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                 </tr>
 
                 {/* Row 2: Quantidades de Entrada & Imagens por Chapa */}
-                <tr className="border-b border-slate-300 divide-x divide-slate-300 bg-white">
+                <tr className="border-b border-black divide-x divide-black bg-white">
                   <td className="p-1 text-center">
                     <span className="block text-[7.5px] uppercase font-bold text-slate-700 leading-none">
                       Quantidade
@@ -445,7 +449,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                 </tr>
 
                 {/* Row 3: Matemática do Corte e Gasto Total com SOBRA */}
-                <tr className="divide-x divide-slate-300 bg-white">
+                <tr className="divide-x divide-black bg-white">
                   <td className="p-1 text-center">
                     <span className="block text-[7.5px] uppercase font-bold text-slate-700 leading-none">
                       Total Folhas Impressas
@@ -489,14 +493,14 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
 
             {/* Linha Simples da Conta da O.S. */}
             {formulaText && (
-              <div className="border-t border-slate-300 bg-slate-50 px-2 py-0.5 text-center font-mono font-bold text-black text-[8.5px] sm:text-[9px] tracking-tight leading-tight">
+              <div className="border-t border-black bg-slate-50 px-2 py-0.5 text-center font-mono font-bold text-black text-[8.5px] sm:text-[9px] tracking-tight leading-tight">
                 CÁLCULO: {formulaText}
               </div>
             )}
           </div>
 
           {/* ================= 5. GUIA DE PROGRAMAÇÃO DA GUILHOTINA COMPACTA ================= */}
-          <div className="rounded-xl border border-slate-300 p-2.5 mb-1.5 bg-white overflow-hidden">
+          <div className="rounded-xl border border-black p-2.5 mb-1.5 bg-white overflow-hidden">
             <div className="flex items-center justify-between gap-4">
               {/* Left Info: Nomenclatura Técnica e Descrição */}
               <div className="flex-1">
@@ -515,7 +519,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
               </div>
 
               {/* Right: Miniatura Visual em SVG Compactada (h-14 sm:h-16) */}
-              <div className="bg-white border border-slate-300 p-1 rounded-lg shrink-0 flex flex-col items-center">
+              <div className="bg-white border border-black p-1 rounded-lg shrink-0 flex flex-col items-center">
                 <svg
                   viewBox={`0 0 ${svgBoxW} ${svgBoxH}`}
                   width={svgBoxW}
@@ -605,7 +609,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
               {cutterInstructions.map((instruction, idx) => (
                 <div
                   key={idx}
-                  className="text-xs sm:text-[13px] font-black uppercase text-black tracking-wide bg-slate-50 p-1.5 border border-slate-300 rounded-lg block w-full text-center leading-tight"
+                  className="text-xs sm:text-[13px] font-black uppercase text-black tracking-wide bg-slate-50 p-1.5 border border-black rounded-lg block w-full text-center leading-tight"
                 >
                   {instruction}
                 </div>
@@ -614,15 +618,15 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
           </div>
 
           {/* ================= 6. COMPACTAÇÃO RIGOROSA DAS 9 LINHAS DE PRODUÇÃO (h-8) ================= */}
-          <div className="rounded-xl border border-slate-300 overflow-hidden mb-1 bg-white">
-            <div className="bg-slate-200/90 text-black border-b border-slate-300 px-2.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider flex items-center justify-between">
+          <div className="rounded-xl border border-black overflow-hidden mb-1 bg-white">
+            <div className="bg-slate-200/90 text-black border-b border-black px-2.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider flex items-center justify-between">
               <span>Controle Físico dos Setores de Produção (Marcação Obrigatória à Caneta)</span>
               <span className="text-[7.5px] font-bold text-black">9 Etapas Operacionais</span>
             </div>
 
             <table className="w-full text-[8.5px]" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
               <thead>
-                <tr className="bg-slate-100 text-black uppercase font-black divide-x divide-slate-300 border-b border-slate-300 text-[8px] h-4.5">
+                <tr className="bg-slate-100 text-black uppercase font-black divide-x divide-black border-b border-black text-[8px] h-4.5">
                   <th className="px-2 py-0.5 text-left w-[30%]">Setor de Produção</th>
                   <th className="px-2 py-0.5 text-left w-[28%]">Operador Responsável</th>
                   <th className="px-2 py-0.5 text-center w-[16%]">Início (Data / Hora)</th>
@@ -630,9 +634,9 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                   <th className="px-2 py-0.5 text-center w-[10%]">Rubrica</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-300">
+              <tbody className="divide-y divide-black">
                 {productionSectors.map((sector) => (
-                  <tr key={sector.id} className="divide-x divide-slate-300 h-8 max-h-8">
+                  <tr key={sector.id} className="divide-x divide-black h-8 max-h-8">
                     {/* Setor: Nome Ampliado em Negrito Forte */}
                     <td className="px-2 py-0 bg-slate-50 flex flex-col justify-center h-8 overflow-hidden">
                       <span className="font-black text-[10px] text-black uppercase tracking-wide leading-tight truncate">
@@ -646,28 +650,28 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
                     {/* Operador: Quadrado 100% LIMPO no meio, linha fina 1px de pauta na base */}
                     <td className="px-2 py-0 bg-white relative h-8">
                       <div className="h-full flex flex-col justify-end pb-0.5">
-                        <div className="w-full border-b border-slate-300"></div>
+                        <div className="w-full border-b border-black"></div>
                       </div>
                     </td>
 
                     {/* Início: Quadrado 100% LIMPO no meio, linha fina 1px de pauta na base */}
                     <td className="px-2 py-0 bg-white relative h-8">
                       <div className="h-full flex flex-col justify-end pb-0.5">
-                        <div className="w-full border-b border-slate-300"></div>
+                        <div className="w-full border-b border-black"></div>
                       </div>
                     </td>
 
                     {/* Término: Quadrado 100% LIMPO no meio, linha fina 1px de pauta na base */}
                     <td className="px-2 py-0 bg-white relative h-8">
                       <div className="h-full flex flex-col justify-end pb-0.5">
-                        <div className="w-full border-b border-slate-300"></div>
+                        <div className="w-full border-b border-black"></div>
                       </div>
                     </td>
 
                     {/* Rubrica: Quadrado 100% LIMPO no meio, linha fina 1px de pauta na base */}
                     <td className="px-2 py-0 bg-white relative h-8">
                       <div className="h-full flex flex-col justify-end pb-0.5">
-                        <div className="w-full border-b border-slate-300"></div>
+                        <div className="w-full border-b border-black"></div>
                       </div>
                     </td>
                   </tr>
@@ -678,7 +682,7 @@ export const PrintA4OrderModal: React.FC<PrintA4OrderModalProps> = ({ order, onC
         </div>
 
         {/* ================= 7. RODAPÉ DE VALIDAÇÃO INSTITUCIONAL (LINHA ÚNICA) ================= */}
-        <div className="border-t border-slate-300 pt-1 flex items-center justify-between text-[7px] text-slate-700 font-semibold uppercase tracking-wider">
+        <div className="border-t border-black pt-1 flex items-center justify-between text-[7px] text-slate-700 font-semibold uppercase tracking-wider">
           <span>PODER JUDICIÁRIO DO ESTADO DO RIO DE JANEIRO &bull; DIGRA - DIVISÃO GRÁFICA</span>
           <span>EMITIDO ELETRONICAMENTE EM {new Date().toLocaleString('pt-BR')}</span>
           <span className="font-mono font-black text-black">O.S. {cleanOrderNumber} &bull; PÁGINA 1/1</span>

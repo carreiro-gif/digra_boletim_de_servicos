@@ -65,6 +65,8 @@ interface GraphicContextType {
     > & { id?: string; orderNumber?: string }
   ) => Promise<ServiceOrder>;
   updateOrder: (id: string, data: Partial<ServiceOrder>) => Promise<ServiceOrder | undefined>;
+  handleUpdateOrder: (id: string, data: Partial<ServiceOrder>) => Promise<ServiceOrder | undefined>;
+  editOrder: (id: string, data: Partial<ServiceOrder>) => Promise<ServiceOrder | undefined>;
   deleteOrder: (id: string) => Promise<void>;
   updateOrderStatus: (id: string, status: OrderStatus) => void;
   getNextOrderNumber: () => string;
@@ -385,21 +387,40 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       unsubOrders = onSnapshot(
         qOrders,
         (snapshot) => {
-          if (!snapshot.empty) {
-            const remoteOrders = snapshot.docs.map((d) => d.data() as ServiceOrder);
-            setOrders((prev) => {
-              const map = new Map<string, ServiceOrder>();
-              // Preserva ordens mais antigas já carregadas sob demanda ou em cache
-              for (const ord of prev) {
-                if (ord.id) map.set(ord.id, ord);
+          const remoteOrders = snapshot.docs.map((d) => {
+            const data = d.data() as ServiceOrder;
+            return {
+              ...data,
+              id: d.id || data.id,
+            };
+          });
+
+          setOrders((prev) => {
+            const combinedMap = new Map<string, ServiceOrder>();
+
+            // 1. Ordens remotas oficiais do Firestore têm prioridade máxima
+            for (const ord of remoteOrders) {
+              if (ord.id) combinedMap.set(ord.id, ord);
+            }
+
+            // 2. Preserva apenas ordens antigas carregadas sob demanda (anteriores à mais antiga da janela remota)
+            const oldestRemoteCreatedAt =
+              remoteOrders.length > 0
+                ? remoteOrders[remoteOrders.length - 1].createdAt || 0
+                : 0;
+
+            for (const ord of prev) {
+              if (ord.id && !combinedMap.has(ord.id)) {
+                if ((ord.createdAt || 0) < oldestRemoteCreatedAt) {
+                  combinedMap.set(ord.id, ord);
+                }
               }
-              // Atualiza com os documentos mais recentes do listener
-              for (const ord of remoteOrders) {
-                if (ord.id) map.set(ord.id, ord);
-              }
-              return Array.from(map.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-            });
-          }
+            }
+
+            return Array.from(combinedMap.values()).sort(
+              (a, b) => (b.createdAt || 0) - (a.createdAt || 0)
+            );
+          });
           setIsFirebaseActive(true);
         },
         handleListenerError('orders')
@@ -614,7 +635,8 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       };
 
       setOrders((prev) => {
-        const updated = [newOrder, ...prev];
+        const withoutSameId = prev.filter((o) => o.id !== id);
+        const updated = [newOrder, ...withoutSameId];
         broadcastUpdate('SYNC_ORDERS', updated);
         return updated;
       });
@@ -639,8 +661,10 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
       let resultOrder: ServiceOrder | undefined;
 
       setOrders((prev) => {
+        let matched = false;
         const updated = prev.map((ord) => {
           if (ord.id !== id) return ord;
+          matched = true;
 
           const merged = { ...ord, ...data, updatedAt: Date.now() };
 
@@ -681,8 +705,20 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
           return result;
         });
 
-        broadcastUpdate('SYNC_ORDERS', updated);
-        return updated;
+        // Garantia de substituição limpa pelo ID e eliminação de duplicatas
+        const listToDedup = matched ? updated : (resultOrder ? [resultOrder, ...prev] : prev);
+        const dedupMap = new Map<string, ServiceOrder>();
+        for (const o of listToDedup) {
+          if (o && o.id) {
+            dedupMap.set(o.id, o);
+          }
+        }
+        const finalOrders = Array.from(dedupMap.values()).sort(
+          (a, b) => (b.createdAt || 0) - (a.createdAt || 0)
+        );
+
+        broadcastUpdate('SYNC_ORDERS', finalOrders);
+        return finalOrders;
       });
 
       if (isFirebaseConfigured && db && resultOrder) {
@@ -963,6 +999,8 @@ export const GraphicProvider: React.FC<{ children: React.ReactNode }> = ({ child
         hasLoadedAllOrders,
         addOrder,
         updateOrder,
+        handleUpdateOrder: updateOrder,
+        editOrder: updateOrder,
         deleteOrder,
         updateOrderStatus,
         getNextOrderNumber,
