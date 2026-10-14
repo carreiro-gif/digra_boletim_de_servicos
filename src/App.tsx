@@ -13,11 +13,13 @@ import { DirectorDashboard } from './components/DirectorDashboard';
 import { BaseRegisters } from './components/BaseRegisters';
 import { PrintA4OrderModal } from './components/PrintA4OrderModal';
 import { PjerjLogo } from './components/PjerjLogo';
+import { Columns3 } from 'lucide-react';
 import { ServiceOrder } from './types';
 
 const MainAppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('emission');
   const [orderToEdit, setOrderToEdit] = useState<ServiceOrder | null>(null);
+  const [isKanbanActive, setIsKanbanActive] = useState<boolean>(false);
   const { selectedOrderForPrint, setSelectedOrderForPrint } = useGraphic();
 
   const handlePrintOrder = (order: ServiceOrder) => {
@@ -47,6 +49,8 @@ const MainAppContent: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenNewOrder={handleOpenNewOrder}
+        isKanbanActive={isKanbanActive}
+        setIsKanbanActive={setIsKanbanActive}
       />
 
       {/* Main View Area */}
@@ -54,7 +58,10 @@ const MainAppContent: React.FC = () => {
         {activeTab === 'emission' && (
           <OrderEmissionView
             onPrintOrder={handlePrintOrder}
-            onNavigateKanban={() => setActiveTab('kanban')}
+            onNavigateKanban={() => {
+              setIsKanbanActive(true);
+              setActiveTab('kanban');
+            }}
             orderToEdit={orderToEdit}
             onClearOrderToEdit={() => setOrderToEdit(null)}
           />
@@ -69,10 +76,30 @@ const MainAppContent: React.FC = () => {
         )}
 
         {activeTab === 'kanban' && (
-          <KanbanBoard
-            onPrintOrder={handlePrintOrder}
-            onOpenNewOrder={handleOpenNewOrder}
-          />
+          isKanbanActive ? (
+            <KanbanBoard
+              onPrintOrder={handlePrintOrder}
+              onOpenNewOrder={handleOpenNewOrder}
+            />
+          ) : (
+            <div className="max-w-xl mx-auto my-12 p-8 bg-white border border-slate-200 rounded-2xl text-center shadow-xs">
+              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-200">
+                <Columns3 className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-black text-slate-900">Painel Kanban Inativo</h3>
+              <p className="text-sm text-slate-500 mt-2 mb-6">
+                O fluxo visual das 9 etapas de produção está oculto por padrão. Clique no botão abaixo ou no botão switch "Ativar Painel Kanban" no menu superior para exibir as colunas sem alterar nenhuma O.S. já emitida.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsKanbanActive(true)}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold px-5 py-2.5 rounded-xl shadow-md transition-all text-sm cursor-pointer active:scale-95"
+              >
+                <Columns3 className="w-4 h-4 stroke-[2.5]" />
+                <span>Ativar Painel Kanban Agora</span>
+              </button>
+            </div>
+          )
         )}
 
         {activeTab === 'dashboard' && <DirectorDashboard />}

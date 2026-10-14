@@ -8,9 +8,17 @@ interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   onOpenNewOrder: () => void;
+  isKanbanActive: boolean;
+  setIsKanbanActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenNewOrder }) => {
+export const Header: React.FC<HeaderProps> = ({
+  activeTab,
+  setActiveTab,
+  onOpenNewOrder,
+  isKanbanActive,
+  setIsKanbanActive,
+}) => {
   const { orders, isFirebaseActive, reimportarSismat } = useGraphic();
   const [isReimporting, setIsReimporting] = useState(false);
 
@@ -108,22 +116,68 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenN
             <span>Histórico de O.S.</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab('kanban')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all shrink-0 ${
-              activeTab === 'kanban'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-900/50'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Columns3 className="w-4 h-4 text-amber-300" />
-            <span>Painel Kanban</span>
-            {inProductionCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-500 text-slate-950">
-                {inProductionCount}
+          {/* Kanban Tab & Switch Control */}
+          <div className="flex items-center gap-1.5 shrink-0 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
+            <button
+              onClick={() => {
+                if (!isKanbanActive) {
+                  setIsKanbanActive(true);
+                }
+                setActiveTab('kanban');
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all shrink-0 ${
+                activeTab === 'kanban'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-900/50'
+                  : isKanbanActive
+                  ? 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              }`}
+              title={isKanbanActive ? 'Acessar Painel Kanban' : 'Painel Kanban (Inativo por padrão - clique para ativar)'}
+            >
+              <Columns3 className={`w-4 h-4 ${isKanbanActive ? 'text-amber-300' : 'text-slate-400'}`} />
+              <span>Painel Kanban</span>
+              {inProductionCount > 0 && isKanbanActive && (
+                <span className="ml-1 px-1.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-500 text-slate-950">
+                  {inProductionCount}
+                </span>
+              )}
+            </button>
+
+            {/* Switch / Toggle: Ativar Painel Kanban */}
+            <label
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-950/80 hover:bg-slate-800/90 border border-slate-700/80 text-xs shrink-0 cursor-pointer select-none transition-colors"
+              title="Ativar ou ocultar visualização do Painel Kanban de 9 colunas"
+            >
+              <span className="text-[11px] font-semibold text-slate-300 whitespace-nowrap">
+                Ativar Painel Kanban
               </span>
-            )}
-          </button>
+              <input
+                type="checkbox"
+                checked={isKanbanActive}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIsKanbanActive(checked);
+                  if (checked) {
+                    setActiveTab('kanban');
+                  } else if (activeTab === 'kanban') {
+                    setActiveTab('emission');
+                  }
+                }}
+                className="sr-only"
+              />
+              <div
+                className={`relative inline-flex h-4.5 w-8 items-center rounded-full transition-colors duration-200 ease-in-out ${
+                  isKanbanActive ? 'bg-amber-500' : 'bg-slate-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-xs transition duration-200 ease-in-out ${
+                    isKanbanActive ? 'translate-x-4' : 'translate-x-0.5'
+                  }`}
+                />
+              </div>
+            </label>
+          </div>
 
           <button
             onClick={() => setActiveTab('dashboard')}
